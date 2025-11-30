@@ -30,6 +30,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Bus } from 'lucide-react';
 import { vehiclesApi, profilesApi } from '@/db/api';
 import type { Vehicle, VehicleWithDriver, Profile } from '@/types/types';
+import { ResponsiveTable } from '@/components/ui/responsive-table';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -150,7 +151,7 @@ export default function Vehicles() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="p-4 xl:p-6 space-y-4 xl:space-y-6">
         <Skeleton className="h-10 w-64 bg-muted" />
         <Card>
           <CardContent className="p-6">
@@ -166,7 +167,7 @@ export default function Vehicles() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 xl:p-6 space-y-4 xl:space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold gradient-text">Vehicles</h1>
@@ -277,7 +278,8 @@ export default function Vehicles() {
               <p className="text-muted-foreground">No vehicles found. Add your first vehicle to get started.</p>
             </div>
           ) : (
-            <Table>
+            <ResponsiveTable>
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Plate Number</TableHead>
@@ -310,6 +312,7 @@ export default function Vehicles() {
                 ))}
               </TableBody>
             </Table>
+            </ResponsiveTable>
           )}
         </CardContent>
       </Card>

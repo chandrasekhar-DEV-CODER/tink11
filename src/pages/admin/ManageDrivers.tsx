@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { driversAuthApi, transportVehiclesApi } from '@/db/authApi';
 import { generateUsernameFromName, generateSecurePassword, generateLicenseNumber } from '@/utils/accountGenerator';
 import type { DriverAuth, TransportVehicle } from '@/types/types';
+import { ResponsiveTable } from '@/components/ui/responsive-table';
 
 interface DriverFormData {
   username: string;
@@ -205,20 +206,20 @@ export default function ManageDrivers() {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 xl:p-6 space-y-4 xl:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Manage Drivers</h1>
-          <p className="text-muted-foreground mt-1">Add, edit, or remove driver accounts</p>
+          <h1 className="text-2xl xl:text-3xl font-bold gradient-text">Manage Drivers</h1>
+          <p className="text-muted-foreground mt-1 text-sm xl:text-base">Add, edit, or remove driver accounts</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()}>
+            <Button onClick={() => handleOpenDialog()} className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Add Driver
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-[95vw] sm:max-w-md">
             <DialogHeader>
               <DialogTitle>{editingDriver ? 'Edit Driver' : 'Add New Driver'}</DialogTitle>
               <DialogDescription>
@@ -337,7 +338,7 @@ export default function ManageDrivers() {
       </div>
 
       <Dialog open={credentialsDialogOpen} onOpenChange={setCredentialsDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-primary">Driver Account Created!</DialogTitle>
             <DialogDescription>
@@ -402,12 +403,12 @@ export default function ManageDrivers() {
 
       <Card className="card-elegant">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
               <UserCircle className="w-5 h-5 text-primary" />
               Driver Directory ({filteredDrivers.length})
             </CardTitle>
-            <div className="relative w-64">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
@@ -427,56 +428,57 @@ export default function ManageDrivers() {
               {searchTerm ? `No drivers found matching "${searchTerm}"` : 'No drivers found. Add your first driver to get started.'}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Driver Name</TableHead>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>License</TableHead>
-                  <TableHead>Assigned Vehicle</TableHead>
-                  <TableHead>Tracking</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDrivers.map((driver) => (
-                  <TableRow key={driver.id}>
-                    <TableCell className="font-medium">{driver.full_name}</TableCell>
-                    <TableCell>
-                      <code className="text-xs bg-muted px-2 py-1 rounded">{driver.username}</code>
-                    </TableCell>
-                    <TableCell>{driver.email || '-'}</TableCell>
-                    <TableCell>{driver.phone || '-'}</TableCell>
-                    <TableCell>{driver.license_number || '-'}</TableCell>
-                    <TableCell>{getVehicleName(driver.vehicle_id)}</TableCell>
-                    <TableCell>
-                      <Badge variant={driver.is_tracking ? 'default' : 'secondary'}>
-                        {driver.is_tracking ? '● Active' : '○ Offline'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={driver.is_active ? 'default' : 'secondary'}>
-                        {driver.is_active ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleOpenDialog(driver)}
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(driver.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
+            <ResponsiveTable>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Driver Name</TableHead>
+                    <TableHead>Username</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>License</TableHead>
+                    <TableHead>Assigned Vehicle</TableHead>
+                    <TableHead>Tracking</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredDrivers.map((driver) => (
+                    <TableRow key={driver.id}>
+                      <TableCell className="font-medium">{driver.full_name}</TableCell>
+                      <TableCell>
+                        <code className="text-xs bg-muted px-2 py-1 rounded">{driver.username}</code>
+                      </TableCell>
+                      <TableCell>{driver.email || '-'}</TableCell>
+                      <TableCell>{driver.phone || '-'}</TableCell>
+                      <TableCell>{driver.license_number || '-'}</TableCell>
+                      <TableCell>{getVehicleName(driver.vehicle_id)}</TableCell>
+                      <TableCell>
+                        <Badge variant={driver.is_tracking ? 'default' : 'secondary'}>
+                          {driver.is_tracking ? '● Active' : '○ Offline'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={driver.is_active ? 'default' : 'secondary'}>
+                          {driver.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenDialog(driver)}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(driver.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -484,6 +486,7 @@ export default function ManageDrivers() {
                 ))}
               </TableBody>
             </Table>
+            </ResponsiveTable>
           )}
         </CardContent>
       </Card>

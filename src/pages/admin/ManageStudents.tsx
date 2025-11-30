@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { studentsAuthApi, parentsAuthApi, transportVehiclesApi } from '@/db/authApi';
 import { generateUsername, generateUsernameFromName, generateSecurePassword, generateStudentId } from '@/utils/accountGenerator';
 import type { StudentAuth, ParentAuth, TransportVehicle } from '@/types/types';
+import { ResponsiveTable } from '@/components/ui/responsive-table';
 
 interface StudentFormData {
   student_username: string;
@@ -297,15 +298,15 @@ export default function ManageStudents() {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 xl:p-6 space-y-4 xl:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Manage Students</h1>
-          <p className="text-muted-foreground mt-1">Add, edit, or remove students and their parent accounts</p>
+          <h1 className="text-2xl xl:text-3xl font-bold gradient-text">Manage Students</h1>
+          <p className="text-muted-foreground mt-1 text-sm xl:text-base">Add, edit, or remove students and their parent accounts</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()}>
+            <Button onClick={() => handleOpenDialog()} className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Add Student
             </Button>
@@ -559,7 +560,7 @@ export default function ManageStudents() {
       </div>
 
       <Dialog open={credentialsDialogOpen} onOpenChange={setCredentialsDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-primary">Accounts Created Successfully!</DialogTitle>
             <DialogDescription>
@@ -571,7 +572,7 @@ export default function ManageStudents() {
               <div className="space-y-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
                 <h4 className="font-semibold text-primary">Student Account</h4>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm text-muted-foreground">Username:</span>
                     <div className="flex items-center gap-2">
                       <code className="text-sm font-mono bg-background px-2 py-1 rounded">
@@ -586,7 +587,7 @@ export default function ManageStudents() {
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm text-muted-foreground">Password:</span>
                     <div className="flex items-center gap-2">
                       <code className="text-sm font-mono bg-background px-2 py-1 rounded">
@@ -607,7 +608,7 @@ export default function ManageStudents() {
               <div className="space-y-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
                 <h4 className="font-semibold text-primary">Parent Account</h4>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm text-muted-foreground">Username:</span>
                     <div className="flex items-center gap-2">
                       <code className="text-sm font-mono bg-background px-2 py-1 rounded">
@@ -622,7 +623,7 @@ export default function ManageStudents() {
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <span className="text-sm text-muted-foreground">Password:</span>
                     <div className="flex items-center gap-2">
                       <code className="text-sm font-mono bg-background px-2 py-1 rounded">
@@ -651,7 +652,7 @@ export default function ManageStudents() {
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => setCredentialsDialogOpen(false)}>
+            <Button onClick={() => setCredentialsDialogOpen(false)} className="w-full sm:w-auto">
               I've Saved the Credentials
             </Button>
           </DialogFooter>
@@ -660,12 +661,12 @@ export default function ManageStudents() {
 
       <Card className="card-elegant">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-primary" />
               Student Directory ({filteredStudents.length})
             </CardTitle>
-            <div className="relative w-64">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
@@ -685,7 +686,8 @@ export default function ManageStudents() {
               {searchTerm ? `No students found matching "${searchTerm}"` : 'No students found. Add your first student to get started.'}
             </div>
           ) : (
-            <Table>
+            <ResponsiveTable>
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Student Name</TableHead>
@@ -732,6 +734,7 @@ export default function ManageStudents() {
                 ))}
               </TableBody>
             </Table>
+            </ResponsiveTable>
           )}
         </CardContent>
       </Card>

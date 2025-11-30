@@ -1,4 +1,4 @@
-import { Bell, User, LogOut } from 'lucide-react';
+import { Bell, User, LogOut, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -14,7 +14,11 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 
-export default function Header() {
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+export default function Header({ onMenuClick }: HeaderProps) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [unreadCount] = useState(0);
@@ -41,15 +45,25 @@ export default function Header() {
   };
 
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
-      <div className="flex items-center gap-4">
-        <h2 className="text-lg font-semibold">Welcome back, {user?.full_name || 'User'}</h2>
-        <Badge variant="outline" className="capitalize">
+    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 xl:px-6">
+      {/* Mobile menu button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="xl:hidden"
+        onClick={onMenuClick}
+      >
+        <Menu className="w-5 h-5" />
+      </Button>
+
+      <div className="flex items-center gap-2 xl:gap-4 flex-1 xl:flex-initial min-w-0">
+        <h2 className="text-sm xl:text-lg font-semibold truncate">Welcome back, {user?.full_name || 'User'}</h2>
+        <Badge variant="outline" className="capitalize hidden sm:flex">
           {user?.role?.replace('_', ' ')}
         </Badge>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 xl:gap-4">
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
@@ -76,7 +90,7 @@ export default function Header() {
           </PopoverContent>
         </Popover>
 
-        <Separator orientation="vertical" className="h-8" />
+        <Separator orientation="vertical" className="h-8 hidden sm:block" />
 
         <Popover>
           <PopoverTrigger asChild>
@@ -86,7 +100,7 @@ export default function Header() {
                   {getInitials(user?.full_name || null)}
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium">{user?.full_name || 'User'}</span>
+              <span className="font-medium hidden sm:inline">{user?.full_name || 'User'}</span>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-56 p-2" align="end">

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { parentsAuthApi, studentsAuthApi } from '@/db/authApi';
 import type { ParentAuth, StudentAuth } from '@/types/types';
+import { ResponsiveTable } from '@/components/ui/responsive-table';
 
 export default function ManageParents() {
   const [parents, setParents] = useState<ParentAuth[]>([]);
@@ -125,16 +126,16 @@ export default function ManageParents() {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 xl:p-6 space-y-4 xl:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Manage Parents</h1>
-          <p className="text-muted-foreground mt-1">View and edit parent accounts</p>
+          <h1 className="text-2xl xl:text-3xl font-bold gradient-text">Manage Parents</h1>
+          <p className="text-muted-foreground mt-1 text-sm xl:text-base">View and edit parent accounts</p>
         </div>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Parent Account</DialogTitle>
             <DialogDescription>
@@ -250,12 +251,12 @@ export default function ManageParents() {
 
       <Card className="card-elegant">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-primary" />
               Parent Directory ({filteredParents.length})
             </CardTitle>
-            <div className="relative w-64">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
@@ -275,7 +276,8 @@ export default function ManageParents() {
               {searchTerm ? `No parents found matching "${searchTerm}"` : 'No parents found. Parent accounts are created automatically when you add students.'}
             </div>
           ) : (
-            <Table>
+            <ResponsiveTable>
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Parent Name</TableHead>
@@ -340,6 +342,7 @@ export default function ManageParents() {
                 })}
               </TableBody>
             </Table>
+            </ResponsiveTable>
           )}
         </CardContent>
       </Card>

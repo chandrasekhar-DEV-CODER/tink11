@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { transportVehiclesApi } from '@/db/authApi';
 import type { TransportVehicle } from '@/types/types';
+import { ResponsiveTable } from '@/components/ui/responsive-table';
 
 export default function ManageVehicles() {
   const [vehicles, setVehicles] = useState<TransportVehicle[]>([]);
@@ -118,20 +119,20 @@ export default function ManageVehicles() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 xl:p-6 space-y-4 xl:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Manage Vehicles</h1>
-          <p className="text-muted-foreground mt-1">Add, edit, or remove vehicles from your fleet</p>
+          <h1 className="text-2xl xl:text-3xl font-bold gradient-text">Manage Vehicles</h1>
+          <p className="text-muted-foreground mt-1 text-sm xl:text-base">Add, edit, or remove vehicles from your fleet</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()}>
+            <Button onClick={() => handleOpenDialog()} className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Add Vehicle
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-[95vw] sm:max-w-md">
             <DialogHeader>
               <DialogTitle>{editingVehicle ? 'Edit Vehicle' : 'Add New Vehicle'}</DialogTitle>
               <DialogDescription>
@@ -239,7 +240,8 @@ export default function ManageVehicles() {
               No vehicles found. Add your first vehicle to get started.
             </div>
           ) : (
-            <Table>
+            <ResponsiveTable>
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Vehicle ID</TableHead>
@@ -286,6 +288,7 @@ export default function ManageVehicles() {
                 ))}
               </TableBody>
             </Table>
+            </ResponsiveTable>
           )}
         </CardContent>
       </Card>

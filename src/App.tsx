@@ -5,8 +5,11 @@ import routes from './routes';
 import Sidebar from '@/components/common/Sidebar';
 import Header from '@/components/common/Header';
 import Login from '@/pages/Login';
+import { useState } from 'react';
 
 const App = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <Router>
       <AuthProvider>
@@ -18,9 +21,9 @@ const App = () => {
             path="/*"
             element={
               <div className="flex min-h-screen bg-background">
-                <Sidebar />
-                <div className="flex-1 ml-64">
-                  <Header />
+                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                <div className="flex-1 xl:ml-64">
+                  <Header onMenuClick={() => setSidebarOpen(true)} />
                   <main className="min-h-[calc(100vh-4rem)]">
                     <Routes>
                       {routes.map((route, index) => (
