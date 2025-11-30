@@ -32,17 +32,27 @@ const LiveMap = ({
         const leaflet = await import('leaflet');
         const L = leaflet.default || leaflet;
 
-        if (!mapRef.current) {
-          const map = L.map('live-map').setView(center, zoom);
+        // Check if map container exists
+        const container = document.getElementById('live-map');
+        if (!container) return;
 
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© OSM © CARTO',
-            maxZoom: 19
-          }).addTo(map);
+        // Check if map is already initialized
+        if (mapRef.current) return;
 
-          mapRef.current = map;
-          setMapLoaded(true);
+        // Remove any existing map instance on the container
+        if ((container as any)._leaflet_id) {
+          return;
         }
+
+        const map = L.map('live-map').setView(center, zoom);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '© OSM © CARTO',
+          maxZoom: 19
+        }).addTo(map);
+
+        mapRef.current = map;
+        setMapLoaded(true);
       } catch (err) {
         console.error('Error loading map:', err);
         setError('Map library not installed. Run: npm install leaflet react-leaflet @types/leaflet');
@@ -53,11 +63,23 @@ const LiveMap = ({
 
     return () => {
       if (mapRef.current) {
-        mapRef.current.remove();
+        try {
+          mapRef.current.remove();
+        } catch (err) {
+          console.error('Error removing map:', err);
+        }
         mapRef.current = null;
+        setMapLoaded(false);
       }
     };
-  }, [center, zoom]);
+  }, []);
+
+  // Handle center and zoom changes
+  useEffect(() => {
+    if (mapRef.current && mapLoaded) {
+      mapRef.current.setView(center, zoom);
+    }
+  }, [center, zoom, mapLoaded]);
 
   useEffect(() => {
     if (!mapLoaded || !mapRef.current) return;
