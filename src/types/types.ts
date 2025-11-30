@@ -161,3 +161,120 @@ export interface ActivityLog {
   timestamp: string;
   user?: string;
 }
+
+// New Authentication System Types
+export interface Admin {
+  id: string;
+  username: string;
+  password_hash: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TransportVehicle {
+  id: string;
+  vehicle_id: string;
+  registration_number: string;
+  model: string | null;
+  capacity: number | null;
+  year: number | null;
+  color: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DriverAuth {
+  id: string;
+  username: string;
+  password_hash: string;
+  full_name: string;
+  email: string | null;
+  phone: string;
+  license_number: string;
+  vehicle_id: string | null;
+  is_active: boolean;
+  is_tracking: boolean;
+  current_latitude: number | null;
+  current_longitude: number | null;
+  last_location_update: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ParentAuth {
+  id: string;
+  username: string;
+  password_hash: string;
+  full_name: string;
+  email: string | null;
+  phone: string;
+  address: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StudentAuth {
+  id: string;
+  username: string;
+  password_hash: string;
+  full_name: string;
+  grade: string | null;
+  parent_id: string | null;
+  vehicle_id: string | null;
+  pickup_location: string | null;
+  dropoff_location: string | null;
+  pickup_latitude: number | null;
+  pickup_longitude: number | null;
+  dropoff_latitude: number | null;
+  dropoff_longitude: number | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GPSTrackingLog {
+  id: string;
+  driver_id: string;
+  vehicle_id: string | null;
+  latitude: number;
+  longitude: number;
+  speed: number | null;
+  heading: number | null;
+  accuracy: number | null;
+  recorded_at: string;
+  created_at: string;
+}
+
+export type AuthUserRole = 'admin' | 'driver' | 'student' | 'parent';
+
+export interface LoginCredentials {
+  username: string;
+  password: string;
+  role: AuthUserRole;
+}
+
+export interface AuthUser {
+  id: string;
+  username: string;
+  full_name: string;
+  role: AuthUserRole;
+  email?: string | null;
+  phone?: string | null;
+  vehicle_id?: string | null;
+  is_tracking?: boolean;
+}
+
+export interface DriverWithVehicle extends DriverAuth {
+  vehicle?: TransportVehicle | null;
+}
+
+export interface StudentWithRelations extends StudentAuth {
+  parent?: ParentAuth | null;
+  vehicle?: TransportVehicle | null;
+}

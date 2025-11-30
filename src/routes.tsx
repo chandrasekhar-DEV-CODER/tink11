@@ -6,6 +6,7 @@ import Stops from './pages/Stops';
 import Students from './pages/Students';
 import Trips from './pages/Trips';
 import Settings from './pages/Settings';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -20,6 +21,11 @@ const routes: RouteConfig[] = [
     name: 'Dashboard',
     path: '/',
     element: <Dashboard />
+  },
+  {
+    name: 'Admin Dashboard',
+    path: '/admin/dashboard',
+    element: <AdminDashboard />
   },
   {
     name: 'Live Tracking',
