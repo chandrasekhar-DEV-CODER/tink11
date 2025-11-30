@@ -32,33 +32,39 @@ const navItems: NavItem[] = [
     roles: ['admin', 'driver', 'student', 'parent']
   },
   { 
+    name: 'Live Tracking', 
+    path: '/tracking/live', 
+    icon: <Map className="w-5 h-5" />,
+    roles: ['admin', 'driver', 'student', 'parent']
+  },
+  { 
     name: 'Admin Dashboard', 
     path: '/admin/dashboard', 
     icon: <Shield className="w-5 h-5" />,
     roles: ['admin']
   },
   { 
-    name: 'Manage Vehicles', 
-    path: '/admin/vehicles', 
-    icon: <Bus className="w-5 h-5" />,
-    roles: ['admin']
-  },
-  { 
-    name: 'Manage Drivers', 
-    path: '/admin/drivers', 
-    icon: <UserCircle className="w-5 h-5" />,
-    roles: ['admin']
-  },
-  { 
-    name: 'Manage Students', 
+    name: 'User Management', 
     path: '/admin/students', 
     icon: <GraduationCap className="w-5 h-5" />,
     roles: ['admin']
   },
   { 
-    name: 'Manage Parents', 
+    name: 'Driver Management', 
+    path: '/admin/drivers', 
+    icon: <UserCircle className="w-5 h-5" />,
+    roles: ['admin']
+  },
+  { 
+    name: 'Parent Management', 
     path: '/admin/parents', 
     icon: <UsersRound className="w-5 h-5" />,
+    roles: ['admin']
+  },
+  { 
+    name: 'Vehicle Management', 
+    path: '/admin/vehicles', 
+    icon: <Bus className="w-5 h-5" />,
     roles: ['admin']
   },
   { 
@@ -66,12 +72,6 @@ const navItems: NavItem[] = [
     path: '/driver/dashboard', 
     icon: <Navigation className="w-5 h-5" />,
     roles: ['driver']
-  },
-  { 
-    name: 'Live Tracking', 
-    path: '/tracking/live', 
-    icon: <Map className="w-5 h-5" />,
-    roles: ['admin', 'driver', 'student', 'parent']
   },
   { 
     name: 'Vehicles', 
