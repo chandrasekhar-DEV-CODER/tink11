@@ -129,11 +129,18 @@ export const adminApi = {
     const { data, error } = await supabase
       .from('admins')
       .insert(admin)
-      .select()
-      .single();
+      .select();
 
-    if (error) throw error;
-    return data;
+    if (error) {
+      console.error('Admin creation error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      throw new Error('No data returned from admin creation');
+    }
+    
+    return data[0];
   },
 
   async update(id: string, admin: Partial<Admin>): Promise<Admin> {
@@ -185,11 +192,18 @@ export const transportVehiclesApi = {
     const { data, error } = await supabase
       .from('transport_vehicles')
       .insert(vehicle)
-      .select()
-      .single();
+      .select();
 
-    if (error) throw error;
-    return data;
+    if (error) {
+      console.error('Vehicle creation error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      throw new Error('No data returned from vehicle creation');
+    }
+    
+    return data[0];
   },
 
   async update(id: string, vehicle: Partial<TransportVehicle>): Promise<TransportVehicle> {
@@ -254,11 +268,18 @@ export const driversAuthApi = {
     const { data, error } = await supabase
       .from('drivers_auth')
       .insert(driver)
-      .select()
-      .single();
+      .select();
 
-    if (error) throw error;
-    return data;
+    if (error) {
+      console.error('Driver creation error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      throw new Error('No data returned from driver creation');
+    }
+    
+    return data[0];
   },
 
   async update(id: string, driver: Partial<DriverAuth>): Promise<DriverAuth> {
@@ -341,11 +362,18 @@ export const parentsAuthApi = {
     const { data, error } = await supabase
       .from('parents_auth')
       .insert(parent)
-      .select()
-      .single();
+      .select();
 
-    if (error) throw error;
-    return data;
+    if (error) {
+      console.error('Parent creation error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      throw new Error('No data returned from parent creation');
+    }
+    
+    return data[0];
   },
 
   async update(id: string, parent: Partial<ParentAuth>): Promise<ParentAuth> {
@@ -422,11 +450,18 @@ export const studentsAuthApi = {
     const { data, error } = await supabase
       .from('students_auth')
       .insert(student)
-      .select()
-      .single();
+      .select();
 
-    if (error) throw error;
-    return data;
+    if (error) {
+      console.error('Student creation error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      throw new Error('No data returned from student creation');
+    }
+    
+    return data[0];
   },
 
   async update(id: string, student: Partial<StudentAuth>): Promise<StudentAuth> {
