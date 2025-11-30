@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Users, Eye, EyeOff, Copy, Check } from 'lucide-react';
+import { Plus, Pencil, Trash2, Users, Eye, EyeOff, Copy, Check, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -44,6 +44,7 @@ export default function ManageStudents() {
   const [parents, setParents] = useState<ParentAuth[]>([]);
   const [vehicles, setVehicles] = useState<TransportVehicle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false);
   const [generatedCredentials, setGeneratedCredentials] = useState<GeneratedCredentials | null>(null);
@@ -281,6 +282,19 @@ export default function ManageStudents() {
     const vehicle = vehicles.find(v => v.id === vehicleId);
     return vehicle?.vehicle_id || '-';
   };
+
+  const filteredStudents = students.filter(student => {
+    const searchLower = searchTerm.toLowerCase();
+    const parent = parents.find(p => p.id === student.parent_id);
+    return (
+      student.full_name.toLowerCase().includes(searchLower) ||
+      student.username.toLowerCase().includes(searchLower) ||
+      student.grade?.toLowerCase().includes(searchLower) ||
+      parent?.full_name.toLowerCase().includes(searchLower) ||
+      parent?.email?.toLowerCase().includes(searchLower) ||
+      parent?.phone?.toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <div className="p-6 space-y-6">
@@ -646,17 +660,29 @@ export default function ManageStudents() {
 
       <Card className="card-elegant">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            Student Directory ({students.length})
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary" />
+              Student Directory ({filteredStudents.length})
+            </CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search students..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="text-center py-8 text-muted-foreground">Loading students...</div>
-          ) : students.length === 0 ? (
+          ) : filteredStudents.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No students found. Add your first student to get started.
+              {searchTerm ? `No students found matching "${searchTerm}"` : 'No students found. Add your first student to get started.'}
             </div>
           ) : (
             <Table>
@@ -672,7 +698,7 @@ export default function ManageStudents() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {students.map((student) => (
+                {filteredStudents.map((student) => (
                   <TableRow key={student.id}>
                     <TableCell className="font-medium">{student.full_name}</TableCell>
                     <TableCell>{student.grade || '-'}</TableCell>

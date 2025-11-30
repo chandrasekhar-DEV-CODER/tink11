@@ -27,8 +27,7 @@ A comprehensive school bus management platform providing unified login portal su
 - **Admin-Exclusive Management**: All vehicle data management operations must be performed exclusively through the admin dashboard interface
 
 #### 3.2.2 Driver Management (CRUD)
-- **Add Driver Feature**:
-  - **Driver Information Form**: Capture all necessary driver details including:\n    - Full name
+- **Add Driver Feature**:\n  - **Driver Information Form**: Capture all necessary driver details including:\n    - Full name
     - Contact phone number
     - Email address\n    - License number
     - **User ID** (custom username field - admin enters desired username)
@@ -43,6 +42,12 @@ A comprehensive school bus management platform providing unified login portal su
     - Store credentials securely in the `drivers` table with proper encryption
   - **Credential Display**: Show entered credentials to admin after successful creation with copy-to-clipboard functionality
 - **View Driver List**: Display using shadcn/ui Data Tables component with account credentials (masked, with reveal option for admin)
+- **Driver Search Functionality**:
+  - Dedicated search bar positioned above the driver list table
+  - Real-time search capability filtering by: driver name, username, email, phone number, license number, or assigned vehicle
+  - Search results update dynamically as user types
+  - Clear search button to reset filters
+  - Search bar styling consistent with overall design theme
 - **Edit Driver Information**: Implement via Dialog/Sheet components, allow updating driver details, reassigning vehicles, and resetting passwords
 - **Deactivate/Delete Driver Accounts**: System validates that driver has no active trips before deactivation
 - **Vehicle Association**: Must specify vehicle_id when creating driver to establish relationship link
@@ -69,8 +74,7 @@ A comprehensive school bus management platform providing unified login portal su
       - **User ID** (custom username field - admin enters desired username for parent)
       - **Password** (custom password field - admin sets initial password for parent)
       - Contact phone number
-      - Email address
-      - Relationship to student (father/mother/guardian)
+      - Email address\n      - Relationship to student (father/mother/guardian)
       - Secondary contact (optional)
       - Home address
     - System validates parent username uniqueness across all user tables
@@ -86,7 +90,12 @@ A comprehensive school bus management platform providing unified login portal su
   - Grade level
   - Associated parent information\n  - Account credentials (masked, with reveal option for admin)
   - Account status (active/inactive)
-  - Assigned bus/route\n- **Edit Student Information**: Update student details, modify parent associations, and reset passwords if needed
+  - Assigned bus/route\n- **Student Search Functionality**:
+  - Dedicated search bar positioned above the student list table
+  - Real-time search capability filtering by: student name, student ID number, username, grade level, parent name, or assigned bus\n  - Search results update dynamically as user types
+  - Clear search button to reset filters
+  - Search bar styling consistent with overall design theme
+- **Edit Student Information**: Update student details, modify parent associations, and reset passwords if needed
 - **Deactivate/Delete Student Records**: \n  - When deactivating a student, system prompts admin to handle associated parent account
   - Option to deactivate parent if no other students are linked\n  - Maintain data integrity through cascading rules
   - Require admin confirmation before deactivation
@@ -98,9 +107,16 @@ A comprehensive school bus management platform providing unified login portal su
   - Associated student(s) with their names and IDs
   - Account status (active/inactive)
   - Login credentials (masked, with reveal option for admin)
-  - Relationship to student(s)\n- **Edit Parent Information**: \n  - Update contact details (phone, email, address)
+  - Relationship to student(s)\n- **Parent Search Functionality**:
+  - Dedicated search bar positioned above the parent list table
+  - Real-time search capability filtering by: parent name, username, email, phone number, or associated student name
+  - Search results update dynamically as user types
+  - Clear search button to reset filters
+  - Search bar styling consistent with overall design theme
+- **Edit Parent Information**: \n  - Update contact details (phone, email, address)
   - Modify student associations (link/unlink students)
-  - Update relationship information\n  - Cannot modify username (read-only)
+  - Update relationship information
+  - Cannot modify username (read-only)
   - Can reset password (admin enters new password)
 - **Deactivate/Delete Parent Accounts**:
   - System prevents deletion if parent has active linked students
@@ -235,8 +251,7 @@ A comprehensive school bus management platform providing unified login portal su
 
 #### 3.4.3 Real-time Data Subscription
 - Subscribe to vehicle location updates using Socket.io
-- Filter relevant vehicle data by busId
-- No manual page refresh needed, data automatically pushed\n- Use hashmap data structure for efficient multi-vehicle state management: `{ busId: { lat, lng, speed, heading } }`
+- Filter relevant vehicle data by busId\n- No manual page refresh needed, data automatically pushed\n- Use hashmap data structure for efficient multi-vehicle state management: `{ busId: { lat, lng, speed, heading } }`
 
 #### 3.4.4 Geofencing and Push Notifications (Phase 5: Advanced)
 - **Distance Calculation**: Use Haversine formula to calculate distance between bus and student pickup point
@@ -302,8 +317,8 @@ A comprehensive school bus management platform providing unified login portal su
   - Bulk import capability (optional future enhancement)
   - Credential management interface with reveal/mask toggle
   - Audit log viewer component
-
-#### Driver Portal (Web Version):
+  - **Dedicated search bars for driver, student, and parent list pages with real-time filtering**
+\n#### Driver Portal (Web Version):
 - React (Vite build)
 - Tailwind CSS
 - Socket.io Client\n- Geolocation API (browser native)
@@ -336,14 +351,14 @@ npm install expo-notifications (mobile)\n```
 - `POST /api/admin/vehicles`: Admin add vehicle\n- `PUT /api/admin/vehicles/:id`: Admin update vehicle
 - `DELETE /api/admin/vehicles/:id`: Admin delete vehicle
 - **`POST /api/admin/drivers`**: Admin add driver with manual credential entry (validates username uniqueness and password complexity)
-- **`GET /api/admin/drivers`**: Admin retrieve driver list
+- **`GET /api/admin/drivers`**: Admin retrieve driver list with optional search query parameter
 - **`PUT /api/admin/drivers/:id`**: Admin update driver information
 - **`DELETE /api/admin/drivers/:id`**: Admin deactivate driver
 - **`POST /api/admin/students`**: Admin add student with manual credential entry and linked parent (atomic transaction, validates both usernames and passwords)
-- **`GET /api/admin/students`**: Admin retrieve student list with parent associations
+- **`GET /api/admin/students`**: Admin retrieve student list with parent associations and optional search query parameter
 - **`PUT /api/admin/students/:id`**: Admin update student information
 - **`DELETE /api/admin/students/:id`**: Admin deactivate student (with parent handling logic)
-- **`GET /api/admin/parents`**: Admin retrieve parent list with student associations
+- **`GET /api/admin/parents`**: Admin retrieve parent list with student associations and optional search query parameter
 - **`PUT /api/admin/parents/:id`**: Admin update parent information
 - **`DELETE /api/admin/parents/:id`**: Admin deactivate parent (with validation)
 - **`POST /api/admin/parents`**: Admin manually add parent (special cases)\n- `POST /api/routes`: Create route (receive polyline string)\n- `GET /api/routes/:id`: Get route details
@@ -475,6 +490,7 @@ const DashboardPage = () => {
 - **Develop driver account management with manual credential entry**
 - **Implement atomic transaction handling for student-parent creation**
 - **Build password strength indicator component**
+- **Implement dedicated search bars for driver, student, and parent list pages with real-time filtering functionality**
 
 ### Phase 2: Map Integration (Priority: High, Complexity: Medium)\n- Integrate React-Leaflet and CartoDB Dark Matter\n- Create LiveMap component\n- Implement neon green pulse markers
 - Integrate mapbox-gl-draw route drawing tool
@@ -514,7 +530,9 @@ const DashboardPage = () => {
 8. **Test Credential Management**: Verify reveal/mask functionality and audit logging
 9. **Test Route Management**: Verify admin-exclusive route configuration\n10. **Test Username Uniqueness**: Attempt to create duplicate usernames across different user types
 11. **Test Password Validation**: Attempt to create accounts with weak passwords
-\n### 7.2 Key Verification Points
+12. **Test Search Functionality**: Verify search bars on driver, student, and parent pages filter results correctly in real-time
+
+### 7.2 Key Verification Points
 - Socket.io connection status
 - GPS data reporting frequency
 - Map marker smooth movement effect
@@ -528,6 +546,7 @@ const DashboardPage = () => {
 - **RBAC policy enforcement across all endpoints**
 - **Audit logging accuracy and completeness**
 - **Transaction rollback on failure scenarios**
+- **Search bar functionality and performance on driver, student, and parent list pages**
 
 ### 7.3 Deployment Checklist
 - Generate Google Maps custom style JSON (mapStyle.json) to match Cyber-Dark theme
@@ -562,7 +581,9 @@ const DashboardPage = () => {
 - **Credential reveal audit trail with timestamp and admin identification**
 - **Form validation on both client and server side**
 - **Unique index constraints on username fields across all user tables**
-\n## 9. Website Design Style\n- **Theme Positioning**: Cyber-dark style with neon green accents, emphasizing technology and futurism
+- **Search query sanitization to prevent injection attacks**
+
+## 9. Website Design Style\n- **Theme Positioning**: Cyber-dark style with neon green accents, emphasizing technology and futurism
 - **Color Scheme**:\n  - Main background: #1a1a1a (deep black)
   - Card background: #ffffff (pure white, admin dashboard)
   - Primary color: #3b82f6 (tech blue)
@@ -584,6 +605,7 @@ const DashboardPage = () => {
   - **Credential display**: Monospace font for usernames/passwords, masked by default with reveal toggle
   - **Multi-step forms**: Progress bar with step indicators, clear navigation buttons
   - **Validation messages**: Inline error messages below input fields, real-time feedback as user types
+  - **Search bars**: Positioned prominently above data tables, with search icon, placeholder text, and clear button; styled with subtle border and focus state highlighting
 - **Layout Approach**:
   - Admin dashboard: Sidebar navigation + main content area with breadcrumb navigation
   - Driver control panel: Full-screen vertical center layout, large button design for mobile operation convenience
@@ -591,6 +613,6 @@ const DashboardPage = () => {
   - Forms: Vertical arrangement with clear field labels and inline validation
   - Responsive design adapted for desktop and mobile devices
   - **Multi-step forms**: Progress indicators for student/parent creation workflow with step validation
-  - **Modal dialogs**: Centered overlay with backdrop blur, clear action buttons
-  - **Data tables**: Pagination, search, filter, and sort capabilities with responsive column hiding
+  - **Modal dialogs**: Centered overlay with backdrop blur, clear action buttons\n  - **Data tables**: Pagination, search, filter, and sort capabilities with responsive column hiding
   - **Form validation**: Real-time feedback with color-coded borders (red for errors, green for valid inputs)
+  - **Search interface**: Dedicated search bars positioned above driver, student, and parent list tables with consistent styling and real-time filtering

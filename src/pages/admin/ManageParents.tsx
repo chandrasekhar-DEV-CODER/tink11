@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pencil, Trash2, Users, UserCheck } from 'lucide-react';
+import { Pencil, Trash2, Users, UserCheck, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -15,6 +15,7 @@ export default function ManageParents() {
   const [parents, setParents] = useState<ParentAuth[]>([]);
   const [students, setStudents] = useState<StudentAuth[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingParent, setEditingParent] = useState<ParentAuth | null>(null);
   const [formData, setFormData] = useState({
@@ -108,6 +109,20 @@ export default function ManageParents() {
   const getLinkedStudents = (parentId: string) => {
     return students.filter(s => s.parent_id === parentId);
   };
+
+  const filteredParents = parents.filter(parent => {
+    const searchLower = searchTerm.toLowerCase();
+    const linkedStudents = getLinkedStudents(parent.id);
+    const studentNames = linkedStudents.map(s => s.full_name).join(' ');
+    return (
+      parent.full_name.toLowerCase().includes(searchLower) ||
+      parent.username.toLowerCase().includes(searchLower) ||
+      parent.email?.toLowerCase().includes(searchLower) ||
+      parent.phone?.toLowerCase().includes(searchLower) ||
+      parent.address?.toLowerCase().includes(searchLower) ||
+      studentNames.toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <div className="p-6 space-y-6">
@@ -235,17 +250,29 @@ export default function ManageParents() {
 
       <Card className="card-elegant">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            Parent Directory ({parents.length})
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary" />
+              Parent Directory ({filteredParents.length})
+            </CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search parents..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="text-center py-8 text-muted-foreground">Loading parents...</div>
-          ) : parents.length === 0 ? (
+          ) : filteredParents.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No parents found. Parent accounts are created automatically when you add students.
+              {searchTerm ? `No parents found matching "${searchTerm}"` : 'No parents found. Parent accounts are created automatically when you add students.'}
             </div>
           ) : (
             <Table>
@@ -257,11 +284,11 @@ export default function ManageParents() {
                   <TableHead>Phone</TableHead>
                   <TableHead>Linked Students</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {parents.map((parent) => {
+                {filteredParents.map((parent) => {
                   const linkedStudents = getLinkedStudents(parent.id);
                   return (
                     <TableRow key={parent.id}>

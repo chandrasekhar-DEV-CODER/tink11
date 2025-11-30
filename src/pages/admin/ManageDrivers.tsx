@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, UserCircle, Eye, EyeOff, Copy, Check } from 'lucide-react';
+import { Plus, Pencil, Trash2, UserCircle, Eye, EyeOff, Copy, Check, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -26,6 +26,7 @@ export default function ManageDrivers() {
   const [drivers, setDrivers] = useState<DriverAuth[]>([]);
   const [vehicles, setVehicles] = useState<TransportVehicle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false);
   const [generatedCredentials, setGeneratedCredentials] = useState<{ username: string; password: string } | null>(null);
@@ -191,6 +192,17 @@ export default function ManageDrivers() {
     const vehicle = vehicles.find(v => v.id === vehicleId);
     return vehicle ? `${vehicle.vehicle_id} (${vehicle.registration_number})` : '-';
   };
+
+  const filteredDrivers = drivers.filter(driver => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      driver.full_name.toLowerCase().includes(searchLower) ||
+      driver.username.toLowerCase().includes(searchLower) ||
+      driver.email?.toLowerCase().includes(searchLower) ||
+      driver.phone?.toLowerCase().includes(searchLower) ||
+      driver.license_number?.toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <div className="p-6 space-y-6">
@@ -390,17 +402,29 @@ export default function ManageDrivers() {
 
       <Card className="card-elegant">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserCircle className="w-5 h-5 text-primary" />
-            Driver Directory ({drivers.length})
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <UserCircle className="w-5 h-5 text-primary" />
+              Driver Directory ({filteredDrivers.length})
+            </CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search drivers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="text-center py-8 text-muted-foreground">Loading drivers...</div>
-          ) : drivers.length === 0 ? (
+          ) : filteredDrivers.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No drivers found. Add your first driver to get started.
+              {searchTerm ? `No drivers found matching "${searchTerm}"` : 'No drivers found. Add your first driver to get started.'}
             </div>
           ) : (
             <Table>
@@ -418,7 +442,7 @@ export default function ManageDrivers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {drivers.map((driver) => (
+                {filteredDrivers.map((driver) => (
                   <TableRow key={driver.id}>
                     <TableCell className="font-medium">{driver.full_name}</TableCell>
                     <TableCell>
