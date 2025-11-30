@@ -7,6 +7,9 @@ import Students from './pages/Students';
 import Trips from './pages/Trips';
 import Settings from './pages/Settings';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import ManageVehicles from './pages/admin/ManageVehicles';
+import DriverDashboard from './pages/driver/DriverDashboard';
+import LiveTrackingPage from './pages/tracking/LiveTracking';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -28,7 +31,22 @@ const routes: RouteConfig[] = [
     element: <AdminDashboard />
   },
   {
+    name: 'Manage Vehicles',
+    path: '/admin/vehicles',
+    element: <ManageVehicles />
+  },
+  {
+    name: 'Driver Dashboard',
+    path: '/driver/dashboard',
+    element: <DriverDashboard />
+  },
+  {
     name: 'Live Tracking',
+    path: '/tracking/live',
+    element: <LiveTrackingPage />
+  },
+  {
+    name: 'Live Tracking (Legacy)',
     path: '/tracking',
     element: <LiveTracking />
   },
