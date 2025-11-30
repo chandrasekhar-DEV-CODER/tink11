@@ -8,6 +8,9 @@ import Trips from './pages/Trips';
 import Settings from './pages/Settings';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageVehicles from './pages/admin/ManageVehicles';
+import ManageDrivers from './pages/admin/ManageDrivers';
+import ManageStudents from './pages/admin/ManageStudents';
+import ManageParents from './pages/admin/ManageParents';
 import DriverDashboard from './pages/driver/DriverDashboard';
 import LiveTrackingPage from './pages/tracking/LiveTracking';
 import type { ReactNode } from 'react';
@@ -34,6 +37,21 @@ const routes: RouteConfig[] = [
     name: 'Manage Vehicles',
     path: '/admin/vehicles',
     element: <ManageVehicles />
+  },
+  {
+    name: 'Manage Drivers',
+    path: '/admin/drivers',
+    element: <ManageDrivers />
+  },
+  {
+    name: 'Manage Students',
+    path: '/admin/students',
+    element: <ManageStudents />
+  },
+  {
+    name: 'Manage Parents',
+    path: '/admin/parents',
+    element: <ManageParents />
   },
   {
     name: 'Driver Dashboard',

@@ -1,166 +1,230 @@
-# My School Ride MVP需求文档
+# My School Ride MVP System Specification
 
-## 1. 网站名称
-My School Ride -校车追踪管理系统（MVP版）
+## 1. Website Name
+My School Ride - School Bus Tracking Management System (MVP Version)
 
-## 2. 网站描述
-一个面向学校的校车管理平台，提供统一登录入口，支持管理员、司机、学生、家长四种角色。核心功能包括：管理员对车辆、司机、学生、家长的全面管理；司机实时GPS位置上报；学生和家长实时查看校车位置；推送通知提醒；路线可视化管理。
+## 2. Website Description
+A comprehensive school bus management platform providing unified login portal supporting four user roles: administrators, drivers, students, and parents. Core capabilities include: complete vehicle, driver, student, and parent management by administrators; real-time GPS location reporting by drivers; live bus tracking for students and parents; push notification alerts; and visual route management.
 
-## 3. 核心功能模块
-\n### 3.1 统一登录系统
-- **统一登录入口**：所有用户类型（管理员、司机、学生、家长）通过同一登录页面访问系统
-- **角色选择机制**：登录页面提供下拉菜单或按钮组，用户需先选择角色后输入凭证
-- **角色验证**：系统根据选中角色验证对应数据库表中的用户名和密码
-- **管理员专用路由**：访问 `/adminherelogin` 自动跳转至登录页并预选管理员角色
-- **预配置超级管理员账号**：\n  - 用户名：`chandrasekharadmin`
-  - 密码：`chandrasekharadmin1023@@`
-- JWT身份认证和会话管理
+## 3. Core Functional Modules
 
-### 3.2 管理员模块（Phase 1: Operational Data Management）
-\n#### 3.2.1 车辆管理（CRUD）
-- **添加车辆**：车辆ID、车牌号、型号、载客量、路线名称（如'Route 4- North Campus'）
-- **查看车辆列表**：使用 shadcn/ui Data Tables 组件展示，支持搜索和筛选
-- **编辑车辆信息**：通过 Dialog/Sheet 组件实现无刷新编辑
-- **停用/删除车辆记录**\n- **路线分配**：为每辆车分配文本型路线名称（MVP简化方案）
+### 3.1 Unified Login System
+- **Unified Login Portal**: All user types (administrators, drivers, students, parents) access the system through a single login page
+- **Role Selection Mechanism**: Login page provides dropdown menu or button group for users to select their role before entering credentials
+- **Role Verification**: System validates username and password against the corresponding database table based on selected role
+- **Admin-Specific Route**: Accessing `/adminherelogin` automatically redirects to login page with admin role pre-selected
+- **Pre-configured Super Admin Account**:
+  - Username: `chandrasekharadmin`
+  - Password: `chandrasekharadmin1023@@`
+- JWT authentication and session management
 
-#### 3.2.2 司机管理（CRUD）
-- **添加司机**：姓名、联系方式、驾照号、分配车辆（vehicle_id关联）
-- **查看司机列表**：使用 shadcn/ui Data Tables 组件\n- **编辑司机信息**：通过 Dialog/Sheet 组件实现\n- **停用/删除司机账号**
-- **车辆关联**：创建司机时必须指定 vehicle_id 建立关系链接
+### 3.2 Administrator Module (Phase 1: Operational Data Management)
+\n#### 3.2.1 Vehicle Management (CRUD)\n- **Add Vehicle**: Vehicle ID, license plate, model, capacity, route name (e.g., 'Route 4- North Campus')
+- **View Vehicle List**: Display using shadcn/ui Data Tables component with search and filter capabilities
+- **Edit Vehicle Information**: Implement seamless editing via Dialog/Sheet components
+- **Deactivate/Delete Vehicle Records**\n- **Route Assignment**: Assign text-based route names to each vehicle (MVP simplified approach)
+\n#### 3.2.2 Driver Management (CRUD)
+- **Add Driver**: Name, contact information, license number, assigned vehicle (vehicle_id association)
+- **View Driver List**: Display using shadcn/ui Data Tables component\n- **Edit Driver Information**: Implement via Dialog/Sheet components
+- **Deactivate/Delete Driver Accounts**
+- **Vehicle Association**: Must specify vehicle_id when creating driver to establish relationship link
 
-#### 3.2.3 学生管理（CRUD）
-- **添加学生**：姓名、学号、年级、接送点坐标、关联家长\n- **查看学生列表**：使用 shadcn/ui Data Tables 组件
-- **编辑学生信息**\n- **停用/删除学生记录**
-\n#### 3.2.4 家长管理（CRUD）
-- **添加家长**：姓名、联系方式、关联学生\n- **查看家长列表**：使用 shadcn/ui Data Tables 组件
-- **编辑家长信息**
-- **停用/删除家长账号**
+#### 3.2.3 Student Management (CRUD) - Enhanced
+- **Add Student Feature**:
+  - **Student Information Form**: Capture all necessary student details including:\n    - Full name
+    - Student ID number
+    - Grade level
+    - Pickup/drop-off point coordinates
+    - Emergency contact information
+  - **Automatic Student Account Generation**:\n    - System automatically generates a unique username for the student (format: `student_[studentID]` or custom pattern)
+    - System automatically generates a secure random password for the student account
+    - Display generated credentials to admin immediately after creation (with copy-to-clipboard functionality)
+    - Store credentials securely in the `students` table with proper encryption
+  - **Linked Parent Profile Creation**:
+    - During student addition process, capture parent/guardian details:\n      - Parent/guardian full name
+      - Contact phone number
+      - Email address
+      - Relationship to student (father/mother/guardian)
+      - Secondary contact (optional)
+    - System automatically generates a unique username for the parent account (format: `parent_[studentID]` or custom pattern)
+    - System automatically generates a secure random password for the parent account
+    - Automatically link parent account to the newly created student record via foreign key relationship
+    - Display both student and parent credentials to admin after successful creation
+    - Store parent credentials securely in the `parents` table\n  - **Data Integrity Enforcement**:
+    - Parent account creation is mandatory when adding a student (cannot create student without parent)
+    - System validates that parent account remains linked to at least one active student
+    - Prevent orphaned parent accounts through database constraints
+- **View Student List**: Display using shadcn/ui Data Tables component with associated parent information
+- **Edit Student Information**: Update student details and modify parent associations if needed
+- **Deactivate/Delete Student Records**: \n  - When deactivating a student, system prompts admin to handle associated parent account
+  - Option to deactivate parent if no other students are linked\n  - Maintain data integrity through cascading rules
+\n#### 3.2.4 Parent Management (CRUD) - Enhanced
+- **View Parent List**: Display using shadcn/ui Data Tables component showing:\n  - Parent name and contact details
+  - Associated student(s)\n  - Account status (active/inactive)
+  - Login credentials (masked, with reveal option for admin)
+- **Edit Parent Information**: Update contact details and modify student associations\n- **Deactivate/Delete Parent Accounts**:\n  - System prevents deletion if parent has active linked students
+  - Provide warning and require confirmation before deactivation
+- **Manual Parent Addition** (Optional):
+  - Allow admin to manually add parent accounts for special cases
+  - Require linking to at least one existing student during creation
+  - Follow same automatic credential generation process
 
-#### 3.2.5 路线与站点管理（CRUD）
-- **路线绘制工具**：使用 mapbox-gl-draw 插件在地图上点击创建路线
-- **站点标记**：在路线上标记接送站点坐标
-- **路线保存**：将路线以 polyline 字符串格式存储
-- **路线编辑**：支持修改已有路线和站点位置
-- **路线分配**：将路线关联到具体车辆
+#### 3.2.5 Route and Stop Management (CRUD)
+- **Route Drawing Tool**: Use mapbox-gl-draw plugin to create routes by clicking on the map
+- **Stop Marking**: Mark pickup/drop-off stop coordinates along the route
+- **Route Saving**: Store routes as polyline string format\n- **Route Editing**: Support modification of existing routes and stop locations
+- **Route Assignment**: Associate routes with specific vehicles\n- **Admin-Exclusive Route Configuration**: All route definitions and modifications must be performed exclusively through the admin dashboard interface
 
-#### 3.2.6 实时监控地图\n- **全局车辆视图**：在管理后台地图上实时显示所有在线车辆位置
-- **车辆状态标识**：通过不同颜色或图标区分车辆状态（行驶中/停止/离线）
-- **车辆详情查看**：点击地图标记查看车辆详细信息
-- **实时数据更新**：通过 Socket.io 接收车辆位置更新并刷新地图
+#### 3.2.6 Real-time Monitoring Map
+- **Global Vehicle View**: Display real-time locations of all online vehicles on the admin dashboard map
+- **Vehicle Status Indicators**: Differentiate vehicle states (moving/stopped/offline) using distinct colors or icons
+- **Vehicle Details View**: Click map markers to view detailed vehicle information\n- **Real-time Data Updates**: Receive vehicle location updates via Socket.io and refresh map display
+\n#### 3.2.7 Role-Based Access Control (RBAC) - Enhanced
+- **Supabase RLS (Row Level Security) Policies**:
+  - **Administrator Role**:
+    - Full CRUD permissions on all tables (vehicles, drivers, students, parents, routes)
+    - Exclusive access to user account creation and credential generation
+    - Exclusive access to route configuration and management
+    - Ability to view and manage all system data
+  - **Driver Role**:
+    - READ-only access to assigned vehicle information
+    - READ-only access to assigned route information
+    - UPDATE permission only for own GPS location data
+    - No access to student/parent personal information
+  - **Student Role**:
+    - READ-only access to own profile information
+    - READ-only access to assigned bus location
+    - No access to other students' data
+  - **Parent Role**:
+    - READ-only access to linked student(s) information
+    - READ-only access to assigned bus location for linked students
+    - No access to other families' data
+- **Data Integrity Enforcement**:
+  - Database-level foreign key constraints ensure parent accounts cannot exist without linked students
+  - Cascading rules prevent orphaned records
+  - Transaction-based operations ensure atomic creation of student-parent pairs
+- **Administrative Privilege Segregation**:
+  - All user account management functions accessible only through admin dashboard
+  - No direct database access required for routine operations
+  - Audit logging for all administrative actions (user creation, modifications, deletions)
 
-#### 3.2.7 权限控制
-- Supabase RLS（Row Level Security）策略：
-  - 管理员角色：允许 INSERT和 UPDATE 所有表
-  - 司机角色：仅允许 READ 车辆和路线信息
-\n### 3.3 司机模块（Phase 3: Driver Dashboard - The Publisher）
+### 3.3 Driver Module (Phase 3: Driver Dashboard - The Publisher)
 
-#### 3.3.1 司机控制台（Web版）
-- **状态显示**：显示当前在线/离线状态
-- **行程控制按钮**：\n  - START TRIP：开始追踪，按钮为翠绿色（#10b981）
-  - STOP TRIP：停止追踪，按钮为红色（#ef4444）
-  - 按钮样式：大尺寸（py-6 text-2xl），圆角设计，带阴影效果
-- **实时位置显示**：显示当前经纬度坐标（保留4位小数）
-- **车辆信息展示**：显示分配的车辆信息和当前任务\n- **速度与方向显示**：显示当前行驶速度和方向\n\n#### 3.3.2 实时追踪功能
-- **GPS数据采集**：\n  - 使用 `navigator.geolocation.watchPosition` API（优于 getCurrentPosition）
-  - 采集内容：经纬度、行驶方向（heading）、速度\n  - 配置参数：enableHighAccuracy: true, timeout: 5000, maximumAge: 0
-- **数据节流机制**：每5-10秒更新一次数据库（避免过度写入）
-- **位置数据上传**：通过 Socket.io 实时发送至后端
-- **后台持续运行**：即使应用在后台也保持位置更新
+#### 3.3.1 Driver Control Panel (Web Version)
+- **Status Display**: Show current online/offline status\n- **Trip Control Buttons**:
+  - START TRIP: Begin tracking, button in emerald green (#10b981)
+  - STOP TRIP: Stop tracking, button in red (#ef4444)
+  - Button styling: Large size (py-6 text-2xl), rounded design with shadow effects
+- **Real-time Location Display**: Show current latitude/longitude coordinates (4 decimal places)
+- **Vehicle Information Display**: Show assigned vehicle information and current task\n- **Speed and Direction Display**: Show current driving speed and heading
+\n#### 3.3.2 Real-time Tracking Functionality
+- **GPS Data Collection**:
+  - Use `navigator.geolocation.watchPosition` API (preferred over getCurrentPosition)
+  - Collected data: latitude, longitude, heading, speed\n  - Configuration parameters: enableHighAccuracy: true, timeout: 5000, maximumAge: 0
+- **Data Throttling Mechanism**: Update database every 5-10 seconds (avoid excessive writes)
+- **Location Data Upload**: Send real-time data to backend via Socket.io
+- **Background Persistence**: Maintain location updates even when app is in background
 
-#### 3.3.3 GPS上报逻辑（Socket.io实现）
--司机端通过 `socket.emit('driver:ping', payload)` 发送位置数据
-- payload 包含：busId、lat、lng、speed、heading、timestamp
-- 后端接收后广播给所有订阅该车辆的客户端
-\n### 3.4 学生与家长模块（Phase 4: Parent/Student View - The Subscriber）
+#### 3.3.3 GPS Reporting Logic (Socket.io Implementation)
+- Driver client sends location data via `socket.emit('driver:ping', payload)`
+- Payload includes: busId, lat, lng, speed, heading, timestamp
+- Backend receives and broadcasts to all clients subscribed to that vehicle
+\n### 3.4 Student and Parent Module (Phase 4: Parent/Student View - The Subscriber)
 
-#### 3.4.1 实时地图追踪（Phase 2: Map Integration）
-- **地图引擎**：React-Leaflet + CartoDB Dark Matter Tiles
-- **视觉风格**：Cyber-dark主题配合霓虹绿标记
-- **核心功能**：
-  - 登录后自动加载地图界面
-  - 显示分配给该学生的校车实时位置
-  - 车辆标记使用霓虹绿脉冲动画效果（Neon Green Pulse Marker）
-  - 车辆标记随GPS数据更新自动移动
-  - 显示车辆移动轨迹
-  - 平滑动画过渡：使用CSS transition在两个坐标点间插值，使校车呈现滑行效果而非瞬移
-  - 车辆行驶时显示脉冲动画效果（speed > 0时触发）
+#### 3.4.1 Real-time Map Tracking (Phase 2: Map Integration)
+- **Map Engine**: React-Leaflet + CartoDB Dark Matter Tiles
+- **Visual Style**: Cyber-dark theme with neon green markers\n- **Core Features**:
+  - Automatically load map interface after login
+  - Display real-time location of bus assigned to the student
+  - Vehicle markers use neon green pulse animation effect
+  - Vehicle markers automatically move with GPS data updates
+  - Display vehicle movement trajectory\n  - Smooth animation transitions: Use CSS transitions to interpolate between coordinate points for sliding effect instead of teleportation
+  - Display pulse animation when vehicle is moving (triggered when speed > 0)
 
-#### 3.4.2 位置信息展示
-- 学生接送点标记\n- 校车当前位置与接送点距离
-- 预计到达时间（ETA）
-- 地图自动刷新机制（通过Socket.io实时订阅实现）
+#### 3.4.2 Location Information Display
+- Student pickup/drop-off point markers
+- Distance between current bus location and pickup point
+- Estimated Time of Arrival (ETA)
+- Automatic map refresh mechanism (via Socket.io real-time subscription)
 
-#### 3.4.3 实时数据订阅
-- 使用 Socket.io 订阅车辆位置更新
-- 按busId 过滤相关车辆数据
-- 无需手动刷新页面，数据自动推送更新
-- 使用 hashmap 数据结构高效管理多车辆状态：`{ busId: { lat, lng, speed, heading } }`
+#### 3.4.3 Real-time Data Subscription
+- Subscribe to vehicle location updates using Socket.io
+- Filter relevant vehicle data by busId
+- No manual page refresh needed, data automatically pushed\n- Use hashmap data structure for efficient multi-vehicle state management: `{ busId: { lat, lng, speed, heading } }`
 
-#### 3.4.4 地理围栏与推送提醒（Phase 5: Advanced）
-- **距离计算**：使用 Haversine 公式计算校车与学生接送点距离
-- **到达提醒**：当距离 < 500米时，触发推送通知：'Bus is arriving soon!'
-- **推送通知实现**（移动端）：
-  - 使用 expo-notifications 库
-  - 自动请求推送权限
-  - 获取 FCM Token 并上传至后端
-  - 配置通知处理器：shouldShowAlert、shouldPlaySound、shouldSetBadge
-  - 监听通知接收事件并在控制台记录
-- **触发逻辑**：实时监测位置变化并自动判断\n
-### 3.5 开发与测试工具
-\n#### 3.5.1 GPS模拟器（simulateBus.js）
-- **用途**：模拟校车沿预设路线行驶，用于开发测试
-- **运行方式**：`node scripts/simulateBus.js <busId>`
-- **功能**：
-  - 通过 Socket.io 客户端连接后端
-  - 模拟司机认证流程
-  - 按预设路线数组循环发送GPS坐标
-  - 每3秒发送一次位置更新
-  - 包含速度（45km/h）和方向（90度）模拟数据
-- **路线配置**：支持自定义 MOCK_ROUTE 数组或使用 polyline 解码器
+#### 3.4.4 Geofencing and Push Notifications (Phase 5: Advanced)
+- **Distance Calculation**: Use Haversine formula to calculate distance between bus and student pickup point
+- **Arrival Alert**: Trigger push notification when distance< 500meters:'Bus is arriving soon!'
+- **Push Notification Implementation** (Mobile):
+  - Use expo-notifications library
+  - Automatically request push permissions
+  - Obtain FCM Token and upload to backend
+  - Configure notification handlers: shouldShowAlert, shouldPlaySound, shouldSetBadge
+  - Listen for notification receipt events and log to console
+- **Trigger Logic**: Real-time monitoring of location changes with automatic detection\n
+### 3.5 Development and Testing Tools
+\n#### 3.5.1 GPS Simulator (simulateBus.js)
+- **Purpose**: Simulate bus traveling along preset routes for development testing
+- **Execution**: `node scripts/simulateBus.js <busId>`
+- **Features**:
+  - Connect to backend via Socket.io client
+  - Simulate driver authentication process
+  - Send GPS coordinates in loop following preset route array
+  - Send location updates every 3seconds
+  - Include simulated speed (45km/h) and heading (90 degrees) data
+- **Route Configuration**: Support custom MOCK_ROUTE array or polyline decoder
 
-## 4. 技术架构说明
+## 4. Technical Architecture
 
-### 4.1 数据库设计
-- **独立用户表结构**：
-  - `admins` 表：管理员账号信息
-  - `drivers` 表：司机账号及详细信息（含vehicle_id 外键、fcmToken字段）
-  - `students` 表：学生档案及接送点坐标
-  - `parents` 表：家长账号及关联学生（含fcmToken字段）
-  - `vehicles` 表：车辆信息、分配状态、路线名称
-  - `routes` 表：路线信息（polyline字符串、站点坐标数组）
-  - `gps_logs` 表：司机实时位置记录（driver_id、vehicle_id、latitude、longitude、heading、speed、timestamp）
+### 4.1 Database Design - Enhanced Schema
+- **Independent User Table Structure**:
+  - `admins` table: Administrator account information
+  - `drivers` table: Driver accounts and detailed information (includes vehicle_id foreign key, fcmToken field)
+  - `students` table: Student profiles, pickup point coordinates, **auto-generated username and password fields**
+  - `parents` table: Parent accounts and linked students (includes fcmToken field), **auto-generated username and password fields, student_id foreign key with NOT NULL constraint**
+  - `vehicles` table: Vehicle information, assignment status, route name\n  - `routes` table: Route information (polyline string, stop coordinate arrays)
+  - `gps_logs` table: Driver real-time location records (driver_id, vehicle_id, latitude, longitude, heading, speed, timestamp)
+  - `audit_logs` table (new): Administrative action logging (admin_id, action_type, target_table, target_id, timestamp, details)
 
-### 4.2 后端技术栈
-- Supabase（替代传统 Node.js + MongoDB方案）
-- Supabase Auth（JWT身份认证）\n- Socket.io（WebSocket实时通信，替代Supabase Realtime）
-- RESTful API 自动生成
-- Row Level Security（RLS）权限控制
-- GeofenceService（地理围栏距离计算服务）
-- Push Notification Service（推送通知服务，集成FCM）
+- **Database Constraints**:
+  - Foreign key constraint: `parents.student_id` references `students.id` with ON DELETE RESTRICT
+  - Unique constraint on auto-generated usernames\n  - Check constraint ensuring parent accounts have at least one linked student
+\n### 4.2 Backend Technology Stack
+- Supabase (replacing traditional Node.js + MongoDB approach)
+- Supabase Auth (JWT authentication)
+- Socket.io (WebSocket real-time communication, replacing Supabase Realtime)
+- RESTful API auto-generation\n- Row Level Security (RLS) permission control
+- GeofenceService (geofencing distance calculation service)
+- Push Notification Service (push notification service, integrated with FCM)
+- **Credential Generation Service**: Secure random username/password generator with configurable patterns
+- **Audit Logging Service**: Track all administrative actions for compliance and security
 
-### 4.3 前端技术栈
-\n#### 管理后台：
-- React（Vite构建）
-- Tailwind CSS\n- shadcn/ui 组件库（Data Tables、Dialog、Sheet）
-- Socket.io Client（实时通信）
-- react-map-gl 或 React-Leaflet（地图组件）
-- mapbox-gl-draw（路线绘制插件）
-\n#### 司机端（Web版）：
-- React（Vite构建）\n- Tailwind CSS
-- Socket.io Client
-- Geolocation API（浏览器原生）
-- 响应式设计，支持移动浏览器访问
+### 4.3 Frontend Technology Stack
+\n#### Admin Dashboard:\n- React (Vite build)\n- Tailwind CSS\n- shadcn/ui component library (Data Tables, Dialog, Sheet, Toast)
+- Socket.io Client (real-time communication)
+- react-map-gl or React-Leaflet (map components)
+- mapbox-gl-draw (route drawing plugin)
+- **Enhanced Student/Parent Management UI**:
+  - Multi-step form wizard for student addition with parent details
+  - Credential display modal with copy-to-clipboard functionality
+  - Parent-student relationship visualization
+  - Bulk import capability (optional future enhancement)
 
-#### 学生/家长端（移动端）：
-- React Native + Expo\n- expo-notifications（推送通知）
-- React-Leaflet 或 react-native-maps\n- Socket.io Client
+#### Driver Portal (Web Version):
+- React (Vite build)
+- Tailwind CSS
+- Socket.io Client\n- Geolocation API (browser native)
+- Responsive design supporting mobile browser access
+\n#### Student/Parent Portal (Mobile):
+- React Native + Expo\n- expo-notifications (push notifications)
+- React-Leaflet or react-native-maps\n- Socket.io Client
 - Geolocation API
-\n#### 地图组件依赖安装：
+\n#### Map Component Dependencies:
 ```bash\nnpm install leaflet react-leaflet\nnpm install -D @types/leaflet\nnpm install mapbox-gl @mapbox/mapbox-gl-draw
-npm install socket.io-client\nnpm install expo-notifications (移动端)
-```
+npm install socket.io-client
+npm install expo-notifications (mobile)\n```
 
-#### 全局CSS配置（src/index.css）：
+#### Global CSS Configuration (src/index.css):
 ```css
 @import'leaflet/dist/leaflet.css';
 \n.leaflet-container {
@@ -170,34 +234,43 @@ npm install socket.io-client\nnpm install expo-notifications (移动端)
   z-index: 0;
 }\n```
 
-### 4.4 核心API端点
-- `POST /api/auth/login`：统一登录接口（需传递角色参数）
-- `POST /api/gps/update`：司机上报GPS位置（通过 Socket.io 实现）
-- `GET /api/gps/latest/:driverId`：获取指定司机最新位置\n- `GET /api/admin/vehicles`：管理员获取车辆列表
-- `POST /api/admin/vehicles`：管理员添加车辆
-- `PUT /api/admin/vehicles/:id`：管理员更新车辆\n- `DELETE /api/admin/vehicles/:id`：管理员删除车辆
-- `POST /api/routes`：创建路线（接收polyline字符串）
-- `GET /api/routes/:id`：获取路线详情
-- `PUT /api/routes/:id`：更新路线
-- `POST /api/users/update-fcm`：更新用户FCM Token
-- 类似的CRUD端点适用于 drivers、students、parents\n
-### 4.5 Socket.io 事件定义
-\n#### 司机端事件：
-- `driver:auth`：司机认证（发送token和busId）
-- `driver:ping`：发送位置更新（busId、lat、lng、speed、heading、timestamp）
-\n#### 管理员端事件：
-- `admin:all_buses_update`：接收所有车辆位置更新
-\n#### 家长/学生端事件：
-- `parent:subscribe`：订阅特定车辆位置\n- `bus:location_update`：接收订阅车辆的位置更新
-\n### 4.6 LiveMap 组件实现（src/components/map/LiveMap.jsx）
+### 4.4 Core API Endpoints - Enhanced
+- `POST /api/auth/login`: Unified login interface (requires role parameter)
+- `POST /api/gps/update`: Driver GPS location reporting (via Socket.io)
+- `GET /api/gps/latest/:driverId`: Get latest location for specified driver
+- `GET /api/admin/vehicles`: Admin retrieve vehicle list
+- `POST /api/admin/vehicles`: Admin add vehicle\n- `PUT /api/admin/vehicles/:id`: Admin update vehicle
+- `DELETE /api/admin/vehicles/:id`: Admin delete vehicle
+- **`POST /api/admin/students`**: Admin add student with auto-generated credentials and linked parent (enhanced)
+- **`GET /api/admin/students`**: Admin retrieve student list with parent associations
+- **`PUT /api/admin/students/:id`**: Admin update student information
+- **`DELETE /api/admin/students/:id`**: Admin deactivate student (with parent handling logic)
+- **`GET /api/admin/parents`**: Admin retrieve parent list with student associations
+- **`PUT /api/admin/parents/:id`**: Admin update parent information
+- **`DELETE /api/admin/parents/:id`**: Admin deactivate parent (with validation)
+- `POST /api/routes`: Create route (receive polyline string)
+- `GET /api/routes/:id`: Get route details
+- `PUT /api/routes/:id`: Update route
+- `POST /api/users/update-fcm`: Update user FCM Token
+- **`GET /api/admin/audit-logs`**: Retrieve administrative action logs
+- Similar CRUD endpoints apply to drivers\n
+### 4.5 Socket.io Event Definitions
+\n#### Driver Events:
+- `driver:auth`: Driver authentication (send token and busId)
+- `driver:ping`: Send location update (busId, lat, lng, speed, heading, timestamp)
+\n#### Admin Events:
+- `admin:all_buses_update`: Receive all vehicle location updates
+\n#### Parent/Student Events:
+- `parent:subscribe`: Subscribe to specific vehicle location\n- `bus:location_update`: Receive subscribed vehicle location updates
+\n### 4.6 LiveMap Component Implementation (src/components/map/LiveMap.jsx)
 
-#### 组件配置：
-- 地图瓦片：CartoDB Dark Matter (`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png`)
-- 自定义标记：使用 `L.divIcon` 创建霓虹绿脉冲图标
-- Tailwind 动画类：`animate-ping`、`shadow-green-400`
-- 默认中心点：[17.3850, 78.4867]（Hyderabad示例）
-- 默认缩放级别：13
-\n#### 组件接口：
+#### Component Configuration:
+- Map tiles: CartoDB Dark Matter (`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png`)
+- Custom markers: Create neon green pulse icons using `L.divIcon`
+- Tailwind animation classes: `animate-ping`, `shadow-green-400`
+- Default center point: [17.3850, 78.4867] (Hyderabad example)
+- Default zoom level: 13
+\n#### Component Interface:
 ```typescript
 interface VehicleLocation {
   id: string;\n  name: string;
@@ -205,24 +278,27 @@ interface VehicleLocation {
   lng: number;
   speed: number;
   heading: number;
-  status: 'moving' | 'stopped' | 'offline';
-}\n\ninterface LiveMapProps {
+  status: 'moving' | 'stopped' | 'offline';\n}\n
+interface LiveMapProps {
   center?: [number, number];
   zoom?: number;
   vehicles?: VehicleLocation[];
 }\n```
 
-#### 状态管理：
-- 使用 hashmap 结构存储车辆状态：`{ busId: { lat, lng, speed, heading } }`
-- 通过 Socket.io 监听 `admin:all_buses_update` 事件动态更新\n- 车辆标记根据 speed 值显示/隐藏脉冲动画
-\n#### 使用示例：
+#### State Management:
+- Store vehicle states using hashmap structure: `{ busId: { lat, lng, speed, heading } }`
+- Dynamically update via Socket.io listening to `admin:all_buses_update` event
+- Vehicle markers show/hide pulse animation based on speed value
+\n#### Usage Example:
 ```typescript
 import LiveMap from '@/components/map/LiveMap';
 
 const DashboardPage = () => {
   const [buses, setBuses] = useState({});
   const { socket } = useSocket();
-\n  useEffect(() => {\n    if (!socket) return;
+
+  useEffect(() => {
+    if (!socket) return;
     socket.on('admin:all_buses_update', (data) => {
       setBuses(prev => ({
         ...prev,
@@ -236,128 +312,145 @@ const DashboardPage = () => {
         zoom={13} \n        vehicles={Object.values(buses)} 
       />
     </div>
-  );\n};
+  );
+};
 ```
-\n### 4.7 推送通知实现（mobile/hooks/useNotifications.ts）
 
-#### 功能配置：
-- 使用 expo-notifications 库\n- 配置通知处理器：应用打开时显示通知、播放声音、不设置角标
-- 自动请求推送权限
-- 获取 Expo Push Token（FCM Token）
-- 监听通知接收事件\n
-#### 集成步骤：
-1. 在用户登录后调用 `useNotifications()` hook
-2. 获取的 FCM Token 需上传至后端：`axios.post('/api/users/update-fcm', { fcmToken: token })`
-3. 后端在触发地理围栏时，通过 FCM 向对应用户发送推送
+### 4.7 Push Notification Implementation (mobile/hooks/useNotifications.ts)
 
-## 5. 实时追踪实现方案
+#### Feature Configuration:
+- Use expo-notifications library
+- Configure notification handler: show notifications when app is open, play sound, do not set badge
+- Automatically request push permissions
+- Obtain Expo Push Token (FCM Token)\n- Listen for notification receipt events
 
-### 5.1 司机端（数据发布者）
--使用 `navigator.geolocation.watchPosition` 获取位置\n- 每3-5秒通过 Socket.io 发送位置数据
-- 包含字段：busId、latitude、longitude、speed、heading、timestamp
-- 支持Web端和移动端\n
-### 5.2 服务器端（Socket.io + Supabase）
-- 接收司机端位置数据并存入`gps_logs` 表\n- 通过 Socket.io 实时广播给订阅客户端
-- 执行地理围栏计算（GeofenceService）
-- 触发推送通知（距离 < 500米时）
-- 位置数据保留策略：保存最近24小时轨迹用于历史回放
+#### Integration Steps:
+1. Call `useNotifications()` hook after user login
+2. Upload obtained FCM Token to backend: `axios.post('/api/users/update-fcm', { fcmToken: token })`
+3. Backend sends push via FCM to corresponding users when geofence is triggered
 
-### 5.3 学生/家长端（数据订阅者）
-- 建立 Socket.io 连接并订阅特定车辆\n- 监听 `bus:location_update` 事件
-- 接收最新位置并更新地图标记
-- 使用 CSS transition 实现平滑移动动画
-- 接收推送通知提醒
+## 5. Real-time Tracking Implementation
 
-### 5.4 管理员端（全局监控）
-- 建立 Socket.io 连接\n- 监听 `admin:all_buses_update` 事件
-- 实时更新所有车辆位置
-- 使用 hashmap 高效管理多车辆状态
-\n### 5.5 性能优化
-- GPS数据节流存储（3-10秒间隔，避免数据库过载）
-- Socket.io 房间机制（按车辆ID分组广播）
-- 地理空间索引优化查询性能
-- 前端标记插值动画（减少视觉跳跃感）
-- 使用 hashmap 替代数组遍历提升更新效率
+### 5.1 Driver Side (Data Publisher)
+- Use `navigator.geolocation.watchPosition` to obtain location\n- Send location data via Socket.io every 3-5 seconds
+- Included fields: busId, latitude, longitude, speed, heading, timestamp
+- Support both web and mobile platforms
 
-## 6. 开发阶段规划
+### 5.2 Server Side (Socket.io + Supabase)
+- Receive driver location data and store in `gps_logs` table
+- Real-time broadcast to subscribed clients via Socket.io
+- Execute geofencing calculations (GeofenceService)
+- Trigger push notifications (when distance < 500 meters)
+- Location data retention policy: Keep last 24 hours of trajectory for historical playback
 
-### Phase 1: Operational Data Management（优先级：高，复杂度：低）
-- 实现管理员CRUD 界面
-- 使用 shadcn/ui Data Tables 和 Dialog 组件
-- 配置 Supabase RLS 权限策略
-\n### Phase 2: Map Integration（优先级：高，复杂度：中）
-- 集成 React-Leaflet 和 CartoDB Dark Matter
-- 创建 LiveMap 组件
-- 实现霓虹绿脉冲标记
-- 集成 mapbox-gl-draw 路线绘制工具
+### 5.3 Student/Parent Side (Data Subscriber)
+- Establish Socket.io connection and subscribe to specific vehicle\n- Listen for `bus:location_update` events
+- Receive latest location and update map markers
+- Use CSS transitions for smooth movement animations
+- Receive push notification alerts\n
+### 5.4 Admin Side (Global Monitoring)
+- Establish Socket.io connection\n- Listen for `admin:all_buses_update` events
+- Real-time update of all vehicle locations
+- Use hashmap for efficient multi-vehicle state management
+\n### 5.5 Performance Optimization
+- GPS data throttled storage (3-10 second intervals to avoid database overload)
+- Socket.io room mechanism (broadcast by vehicle ID grouping)
+- Geospatial indexing for optimized query performance
+- Frontend marker interpolation animation (reduce visual jumping)
+- Use hashmap instead of array traversal for improved update efficiency
 
-### Phase 3: Driver Location Logic（优先级：中，复杂度：高）
-- 实现 Geolocation API 调用
-- 配置数据节流机制
-- 完成GPS数据上报逻辑（Socket.io）
-- 开发司机Web控制台界面
+## 6. Development Phase Planning
 
-### Phase 4: Realtime Subscriptions（优先级：中，复杂度：高）
-- 配置 Socket.io 服务端和客户端
-- 实现事件订阅逻辑
-- 添加平滑动画过渡\n- 开发GPS模拟器测试工具
+### Phase 1: Operational Data Management (Priority: High, Complexity: Low-Medium)
+- Implement admin CRUD interfaces\n- Use shadcn/ui Data Tables and Dialog components
+- Configure Supabase RLS permission policies
+- **Implement enhanced student/parent management with automatic credential generation**
+- **Develop credential display and management UI**
+- **Implement audit logging for administrative actions**
+\n### Phase 2: Map Integration (Priority: High, Complexity: Medium)\n- Integrate React-Leaflet and CartoDB Dark Matter\n- Create LiveMap component\n- Implement neon green pulse markers
+- Integrate mapbox-gl-draw route drawing tool
+\n### Phase 3: Driver Location Logic (Priority: Medium, Complexity: High)
+- Implement Geolocation API calls
+- Configure data throttling mechanism
+- Complete GPS data reporting logic (Socket.io)
+- Develop driver web control panel interface
 
-### Phase 5: Geofencing & Push Notifications（优先级：可选，复杂度：中）
-- 实现 Haversine 距离计算（GeofenceService）
-- 集成 expo-notifications\n- 配置 FCM 推送服务
-- 实现到达提醒功能
-- 配置 Toast 通知组件
+### Phase 4: Realtime Subscriptions (Priority: Medium, Complexity: High)
+- Configure Socket.io server and client
+- Implement event subscription logic
+- Add smooth animation transitions
+- Develop GPS simulator testing tool
 
-### Phase 6: Route Management（优先级：中，复杂度：中）
-- 开发路线绘制界面（RouteBuilder.jsx）
-- 实现站点标记功能
-- 完成路线与车辆关联逻辑
-\n## 7. 测试与部署流程
+### Phase 5: Geofencing & Push Notifications (Priority: Optional, Complexity: Medium)
+- Implement Haversine distance calculation (GeofenceService)
+- Integrate expo-notifications\n- Configure FCM push service
+- Implement arrival alert functionality
+- Configure Toast notification component
 
-### 7.1 开发测试流程
-1. **启动GPS模拟器**：`node scripts/simulateBus.js bus_001`
-2. **打开司机控制台**：在移动浏览器访问 `http://192.168.1.x:3000/driver`（使用本地IP）
-3. **打开管理后台**：在桌面浏览器访问实时监控地图
-4. **验证数据流**：确认地图标记随模拟器或真实GPS移动
+### Phase 6: Route Management (Priority: Medium, Complexity: Medium)
+- Develop route drawing interface (RouteBuilder.jsx)
+- Implement stop marking functionality
+- Complete route-vehicle association logic
+\n## 7. Testing and Deployment Process
 
-### 7.2 关键验证点
-- Socket.io 连接状态\n- GPS数据上报频率
-- 地图标记平滑移动效果
-- 推送通知触发时机
-- 多车辆并发追踪性能
+### 7.1 Development Testing Process
+1. **Start GPS Simulator**: `node scripts/simulateBus.js bus_001`
+2. **Open Driver Control Panel**: Access `http://192.168.1.x:3000/driver` in mobile browser (use local IP)
+3. **Open Admin Dashboard**: Access real-time monitoring map in desktop browser
+4. **Verify Data Flow**: Confirm map markers move with simulator or real GPS
+5. **Test Student/Parent Creation**: Verify automatic credential generation and parent linking
+6. **Test RBAC**: Verify role-based access restrictions work correctly
 
-### 7.3 部署检查清单
-- 生成 Google Maps 自定义样式 JSON（mapStyle.json）以匹配 Cyber-Dark 主题
-- 配置生产环境 Socket.io 服务器地址
-- 设置 FCM 服务端密钥
-- 配置Supabase 生产环境变量
-- 启用HTTPS（推送通知和地理定位必需）
+### 7.2 Key Verification Points
+- Socket.io connection status
+- GPS data reporting frequency
+- Map marker smooth movement effect
+- Push notification trigger timing
+- Multi-vehicle concurrent tracking performance
+- **Student-parent account creation atomicity**
+- **Credential generation uniqueness and security**
+- **RBAC policy enforcement across all endpoints**
 
-## 8. 安全与性能\n- 密码加密存储（Supabase Auth 内置 bcrypt）
-- JWT令牌过期机制
-- CORS跨域配置
-- 请求限流保护
-- GPS数据节流存储（3-10秒间隔）
-- 地理空间索引优化查询性能
-- Supabase RLS 行级安全策略
-- Socket.io 房间隔离机制
-- FCM Token 安全存储和更新
+### 7.3 Deployment Checklist
+- Generate Google Maps custom style JSON (mapStyle.json) to match Cyber-Dark theme
+- Configure production Socket.io server address
+- Set FCM server key\n- Configure Supabase production environment variables
+- Enable HTTPS (required for push notifications and geolocation)
+- **Verify RLS policies are active in production**
+- **Test credential generation service under load**
+- **Configure audit log retention policy**
+\n## 8. Security and Performance\n- Password encryption storage (Supabase Auth built-in bcrypt)
+- JWT token expiration mechanism
+- CORS cross-origin configuration
+- Request rate limiting protection
+- GPS data throttled storage (3-10 second intervals)
+- Geospatial indexing for optimized query performance
+- Supabase RLS row-level security policies
+- Socket.io room isolation mechanism
+- FCM Token secure storage and updates
+- **Secure random credential generation with cryptographic strength**
+- **Audit logging for all administrative actions**
+- **Database transaction management for atomic student-parent creation**
+- **Input validation and sanitization for all user-generated content**
 
-## 9. 网站设计风格
-- **主题定位**：Cyber-dark 风格，霓虹绿点缀，强调科技感和未来感
-- **配色方案**：\n  - 主背景：#1a1a1a（深黑）
-  - 卡片背景：#ffffff（纯白，管理后台）
-  - 主题色：#3b82f6（科技蓝）
-  - 霓虹绿：#10b981（翠绿，用于地图标记、强调元素、START按钮）
-  - 警告色/停止按钮：#ef4444（红色）
-  - 边框色：#e2e8f0（浅灰）
-- **视觉细节**：
-  - 地图标记：霓虹绿脉冲动画（animate-ping）配合阴影效果（shadow-green-400），车辆行驶时显示脉冲\n  - 圆角：中等圆角（0.5rem），大按钮使用 rounded-xl\n  - 阴影：轻微卡片阴影，按钮使用 shadow-lg增强层次感
-  - 按钮：扁平化设计，悬停时轻微提升效果，司机控制台按钮采用大尺寸设计（py-6 text-2xl）
-  - 地图：CartoDB Dark Matter 深色底图，清晰的标记图标，车辆标记带方向指示和速度状态
-  - 表格：斑马纹行样式，悬停高亮\n  - 状态指示器：使用颜色区分在线/离线状态（ON AIR为翠绿色，OFFLINE为灰色）
-- **布局方式**：
-  - 管理后台：侧边栏导航 + 主内容区\n  - 司机控制台：全屏垂直居中布局，大按钮设计便于移动端操作
-  - 移动端/家长端：全屏地图视图+ 底部状态栏
-  - 表单：垂直排列，清晰的字段标签
-  - 响应式设计，适配桌面和移动设备
+## 9. Website Design Style\n- **Theme Positioning**: Cyber-dark style with neon green accents, emphasizing technology and futurism
+- **Color Scheme**:
+  - Main background: #1a1a1a (deep black)
+  - Card background: #ffffff (pure white, admin dashboard)
+  - Primary color: #3b82f6 (tech blue)
+  - Neon green: #10b981 (emerald, for map markers, emphasis elements, START button)
+  - Warning/stop button: #ef4444 (red)\n  - Border color: #e2e8f0 (light gray)
+- **Visual Details**:
+  - Map markers: Neon green pulse animation (animate-ping) with shadow effects (shadow-green-400), pulse displays when vehicle is moving
+  - Border radius: Medium rounded (0.5rem), large buttons use rounded-xl
+  - Shadows: Subtle card shadows, buttons use shadow-lg for enhanced depth
+  - Buttons: Flat design with slight lift effect on hover, driver control panel buttons use large size design (py-6text-2xl)
+  - Map: CartoDB Dark Matter dark basemap, clear marker icons, vehicle markers with directional indicators and speed status
+  - Tables: Zebra-striped rows, hover highlighting\n  - Status indicators: Use colors to distinguish online/offline status (ON AIR in emerald green, OFFLINE in gray)
+  - **Form elements**: Clear field labels, validation feedback, success/error states with appropriate color coding
+- **Layout Approach**:
+  - Admin dashboard: Sidebar navigation + main content area
+  - Driver control panel: Full-screen vertical center layout, large button design for mobile operation convenience
+  - Mobile/parent portal: Full-screen map view + bottom status bar
+  - Forms: Vertical arrangement with clear field labels\n  - Responsive design adapted for desktop and mobile devices
+  - **Multi-step forms**: Progress indicators for student/parent creation workflow
