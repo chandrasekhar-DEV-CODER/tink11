@@ -1,468 +1,552 @@
-# My School Ride MVP System Specification - Enhanced Version with Multi-Bus Tracking & Navigation Features
+# My School Ride MVP System Specification - Enhanced Version with Multi-Bus Tracking, Navigation Features & Comprehensive Settings Module
 
 ## 1. Website Name
-My School Ride - School Bus Tracking Management System (MVP Version with Enhanced Multi-Bus Tracking, Navigation, and Optimized Analytics)
+My School Ride - School Bus Tracking Management System (MVP Version with Enhanced Multi-Bus Tracking, Navigation, Optimized Analytics, and Centralized Settings Management)
 
 ## 2. Website Description
-A comprehensive school bus management platform providing unified login portal supporting four user roles: administrators, drivers, students, and parents. Core capabilities include: complete vehicle, driver, student, and parent management by administrators; real-time GPS location reporting by drivers; live bus tracking for students and parents with **multi-bus route visibility and navigation assistance**; push notification alerts; visual route management; **optimized real-time hourly active vehicle analytics based on 24-hour database storage**; self-service password recovery via OTP verification; comprehensive user profile management with image upload; and enhanced admin modules for Vehicles, Routes, Stops, Students, and Trip History with full CRUD operations and advanced tracking features.
+A comprehensive school bus management platform providing unified login portal supporting four user roles: administrators, drivers, students, and parents. Core capabilities include: complete vehicle, driver, student, and parent management by administrators; real-time GPS location reporting by drivers; live bus tracking for students and parents with multi-bus route visibility and navigation assistance; push notification alerts; visual route management; optimized real-time hourly active vehicle analytics based on 24-hour database storage; self-service password recovery via OTP verification; comprehensive user profile management with image upload; enhanced admin modules for Vehicles, Routes, Stops, Students, and Trip History with full CRUD operations and advanced tracking features; **centralized settings management system enabling administrators to configure system-wide UI themes, security policies, notification preferences, localization settings, and file upload restrictions that apply to all users application-wide**.
 
 ## 3. Core Functional Modules
-\n### 3.1 Unified Login System - Enhanced
-(Content remains the same as originaldocument)
 
-### 3.1.1 Forgot Password & OTP Verification System
-(Content remains the same as original document)\n
-### 3.1.2 User Profile Management System
+### 3.1 Unified Login System - Enhanced
 (Content remains the same as original document)
 
-### 3.2 Administrator Module - Enhanced with Improved Core Sections
+#### 3.1.1 Forgot Password & OTP Verification System
+(Content remains the same as original document)\n
+#### 3.1.2 User Profile Management System
+(Content remains the same as original document)
+
+### 3.2 Administrator Module - Enhanced with Improved Core Sections & Settings Management
 (Content remains the same as original document for sections3.2.1 through 3.2.11)
 
-#### 3.2.10 Hourly Active Vehicles Analytics Dashboard - Optimized with24-Hour Database Storage
-- **Real-time Active Vehicle Counter**:\n  - Display current number of active vehicles (vehicles with active trips in progress)
-  - Prominent card widget positioned at top of admin dashboard
-  - Large numeric display with neon green accent color (#10b981)
-  - **Auto-refresh every 30 seconds based on database queries of last 24 hours of stored data**
-  - Visual indicator showing increase/decrease compared to previous hour
-- **Hourly Activity Chart**:
-  - Line chart displaying active vehicle count for the current day (24-hour period)
-  - X-axis: Hours (00:00 to 23:00)
-  - Y-axis: Number of active vehicles
-  - **Data sourced exclusively from hourly_vehicle_stats table with 24-hour retention policy**
-  - Chart library: Recharts or Chart.js with dark theme styling
-  - Hover tooltips showing exact vehicle count and hour\n  - Color scheme: Neon green line (#10b981) on dark background (#1a1a1a)
-- **Active Vehicle List Panel**:
-  - Collapsible side panel showing currently active vehicles
-  - Display vehicle ID, driver name, route name, trip start time\n  - Real-time status updates (moving/stopped)
-  - Click to highlight vehicle on map
-  - Sort by trip duration or vehicle ID
-- **Historical Comparison**:
-  - Compare current day's hourly activity with previous day
-  - Display percentage change in activity levels
-  - Weekly average active vehicles metric
-- **Data Calculation Logic - Optimized**:
-  - Active vehicle defined as: vehicle with trip status = 'active' in current hour
-  - **Query hourly_vehicle_stats table for last 24 hours of aggregated data**
-  - **Database retention policy: Automatically purge GPS logs and hourly stats older than 24 hours**
-  - **Hourly aggregation runs every hour via scheduled job, stores results in hourly_vehicle_stats table**\n  - **Real-time active count calculated from current trips table, not from raw GPS logs**
-  - Cache hourly aggregates for performance optimization
-  - Real-time updates via Socket.io event: admin:hourly_stats_update
+#### 3.2.12 Centralized Settings Management Module - NEW
+\n##### 3.2.12.1 Settings Dashboard Overview
+- **Access Control**: Only administrators with'Super Admin' or 'Settings Manager' role can access\n- **Navigation Structure**: Sidebar menu with categorized settings sections\n- **Visual Layout**: Card-based interface with clear section headers and descriptions
+- **Save Mechanism**: Global'Save Changes' button with confirmation dialog
+- **Reset Functionality**: 'Reset to Defaults' button with warning prompt for each section
+- **Change History Log**: Display last modified timestamp and admin username for each setting
+
+##### 3.2.12.2 UI Theme & Color Customization
+- **Color Picker Interface**:
+  - Primary Color: Main brand color used for headers, buttons, and key UI elements
+  - Secondary Color: Supporting color for backgrounds and secondary actions
+  - Accent Color: Highlight color for notifications, alerts, and active states
+  - Each color picker shows hex code input and visual preview
+- **Live Preview Panel**: Real-time preview of color changes on sample UI components
+- **Application Logic**:
+  - Colors stored in system_settings table as JSON object
+  - Frontend fetches color scheme on app initialization
+  - CSS variables dynamically updated: --primary-color, --secondary-color, --accent-color
+  - All users see updated theme immediately after admin saves (no page refresh required)
+- **Default Theme**: Cyber-dark theme with neon green (#10b981), dark gray (#1a1a1a), and tech blue (#3b82f6)\n
+##### 3.2.12.3 System-Wide Announcements/Banners
+- **Rich Text Editor**: TinyMCE or Quill editor for creating formatted announcements
+- **Banner Configuration**:
+  - Title: Short headline (max 100 characters)
+  - Content: Rich text message with formatting, links, and images
+  - Banner Type: Info/Warning/Critical (affects visual styling)
+  - Visibility Toggle: Show/Hide banner\n  - Schedule Settings: Start date/time and end date/time for automatic display
+  - Target Audience: All users or specific roles (Admin/Driver/Student/Parent)
+- **Display Logic**:
+  - Banner appears at top of application for all targeted users
+  - Dismissible or persistent based on admin configuration
+  - Stored in announcements table with active status flag
+  - Frontend checks active announcements on page load and displays accordingly
+- **Banner Styles**:
+  - Info: Blue background with info icon\n  - Warning: Yellow background with warning icon
+  - Critical: Red background with alert icon
+\n##### 3.2.12.4 Privacy & Security Settings\n- **Password Complexity Requirements**:
+  - Minimum Length: Slider input (6-20 characters, default: 8)
+  - Required Character Types: Checkboxes for uppercase, lowercase, numbers, special characters
+  - Password Expiry: Enable/disable with expiry period dropdown (30/60/90/180 days)
+  - Password History: Prevent reuse of last N passwords (0-10, default: 3)
+- **Two-Factor Authentication (2FA)**:
+  - Global 2FA Toggle: Enable/disable 2FA requirement for all users
+  - 2FA Method: SMS OTP or Authenticator App (Google Authenticator, Authy)\n  - Grace Period: Allow users N days to set up 2FA before enforcement (0-30days)\n- **Session Management**:
+  - Session Timeout: Dropdown selection (15/30/60/120 minutes, or'Never')
+  - Concurrent Sessions: Allow/disallow multiple simultaneous logins per user
+  - Auto-Logout on Inactivity: Enable/disable with configurable idle time
+- **Application Logic**:
+  - Settings stored in system_settings table\n  - Backend validates password against configured rules on user registration/password change
+  - 2FA enforcement checked during login process
+  - Session timeout enforced via JWT expiry and frontend idle detection
+
+##### 3.2.12.5 Notification Preferences
+- **Default Notification Channels**:
+  - Event Type List: New message, task assignment, bus arrival alert, trip started, trip completed, system announcement
+  - Channel Selection: Checkboxes for Email, In-App, Push Notification (mobile)\n  - Per-Event Configuration: Admin sets default channels for each event type
+- **User Customization Policy**:
+  - Radio buttons:'Enforce defaults for all users' or 'Allow personal customization'
+  - If enforced, users cannot change notification settings
+  - If allowed, users can override defaults in their profile settings
+- **Email Notification Settings**:
+  - SMTP Configuration: Server, port, username, password, encryption (TLS/SSL)
+  - From Address: Default sender email for system notifications
+  - Email Template Editor: Customize email templates for each notification type
+- **Push Notification Settings**:
+  - FCM Server Key: Firebase Cloud Messaging configuration for mobile push
+  - Default Sound: Enable/disable notification sound
+  - Badge Count: Enable/disable app badge counter
+- **Application Logic**:
+  - Notification preferences stored in notification_settings table
+  - Backend checks user's notification preferences (or defaults) before sending notifications
+  - Email service uses configured SMTP settings
+  - Push notifications sent via FCM using configured server key
+
+##### 3.2.12.6 Localization and Regional Settings
+- **Language Settings**:
+  - Default Language: Dropdown selection (English, Spanish, French, Chinese, etc.)
+  - Supported Languages: Multi-select list of enabled languages for user selection
+  - Translation Management: Link to translation editor for adding/editing language strings
+- **Time Zone Settings**:
+  - Default Time Zone: Searchable dropdown with all IANA time zones
+  - Auto-Detect User Time Zone: Enable/disable automatic detection based on browser\n- **Date/Time Format**:
+  - Date Format: Dropdown (MM/DD/YYYY, DD/MM/YYYY, YYYY-MM-DD, etc.)
+  - Time Format: Radio buttons (12-hour with AM/PM or 24-hour)
+  - First Day of Week: Dropdown (Sunday or Monday)
+- **Currency and Number Format**:
+  - Default Currency: Dropdown (USD, EUR, GBP, CNY, etc.)
+  - Number Format: Dropdown (1,234.56 or 1.234,56)
+- **Application Logic**:
+  - Settings stored in system_settings table
+  - Frontend uses i18n library (e.g., react-i18next) to load language strings
+  - All dates/times displayed using configured format and time zone
+  - User can override language and time zone in personal profile if allowed
+
+##### 3.2.12.7 File Upload and Storage Limits
+- **Maximum File Size**:
+  - Slider input with unit selector (KB/MB/GB)
+  - Default: 10 MB
+  - Range: 1 KB to 100 MB
+- **Permitted File Types**:
+  - Predefined Categories: Images (jpg, png, gif), Documents (pdf, doc, docx), Spreadsheets (xls, xlsx), Archives (zip, rar)\n  - Custom Extensions: Text input for additional allowed extensions (comma-separated)
+  - Blocked Extensions: Text input for explicitly blocked extensions (e.g., exe, bat, sh)
+- **Storage Quota**:
+  - Per-User Storage Limit: Input field with unit selector (MB/GB)\n  - Total System Storage Limit: Display current usage and maximum capacity
+  - Auto-Cleanup Policy: Enable/disable automatic deletion of files older than N days
+- **Upload Restrictions**:
+  - Virus Scanning: Enable/disable file scanning on upload (requires ClamAV or similar)
+  - Image Compression: Auto-compress images above certain size threshold
+  - Duplicate Detection: Prevent uploading identical files (based on hash)
+- **Application Logic**:
+  - Settings stored in system_settings table
+  - Backend validates file size and type on upload endpoint
+  - Rejected uploads return error message with configured limits
+  - Storage quota checked before accepting upload
+  - File metadata stored in uploads table with user_id, file_size, upload_date\n
+##### 3.2.12.8 Settings Interface Structure
+- **Sidebar Navigation**:
+  1. Dashboard (Overview of all settings)
+  2. Appearance (UI Theme & Colors)
+  3. Announcements (System Banners)
+  4. Security (Password & 2FA)
+  5. Notifications (Channels & Preferences)
+  6. Localization (Language & Regional)
+  7. File Management (Upload Limits)
+  8. Advanced (API Keys, Integrations)
+- **Main Content Area**:
+  - Section Header: Title and description
+  - Setting Groups: Logically grouped form fields with labels and help text
+  - Action Buttons: Save Changes, Reset to Defaults, Cancel\n  - Status Indicators: Success/error messages after save\n- **Responsive Design**: Mobile-friendly layout with collapsible sidebar
+\n##### 3.2.12.9 System-Wide Application Mechanism
+- **Settings Storage**:
+  - Database Table: system_settings (key-value pairs with JSON data type)
+  - Cache Layer: Redis cache for frequently accessed settings (TTL: 5 minutes)\n  - Version Control: Track setting changes with version number and timestamp
+- **Settings Distribution**:
+  - Backend API: GET /api/admin/settings/all (returns all current settings)
+  - Frontend Initialization: Fetch settings on app load and store in global state (Redux/Context)\n  - Real-Time Updates: Socket.io event'settings:updated' broadcasts changes to all connected clients
+  - Client-Side Application: Update CSS variables, i18n language, notification preferences immediately
+- **Validation and Error Handling**:
+  - Backend validates all setting values before saving
+  - Return detailed error messages for invalid inputs
+  - Rollback mechanism if settings update fails
+- **Audit Trail**:
+  - Log all setting changes in settings_audit_log table
+  - Record: admin_id, setting_key, old_value, new_value, timestamp
+  - Display audit log in settings dashboard for transparency
+
+##### 3.2.12.10 Reset to Defaults Functionality
+- **Reset Options**:
+  - Reset Single Section: Button in each settings section to reset only that category
+  - Reset All Settings: Global button to reset entire system to factory defaults
+- **Confirmation Dialog**:
+  - Warning message:'This action will reset all settings to default values. This cannot be undone. Are you sure?'
+  - Require admin to type 'RESET' to confirm
+- **Default Values**:
+  - Stored in backend configuration file (config/defaults.json)
+  - Includes default colors, password rules, notification channels, etc.
+- **Reset Process**:
+  - Backend deletes current settings from database
+  - Inserts default values from configuration file
+  - Broadcasts 'settings:reset' event to all clients
+  - Clients reload settings and update UI
 
 ### 3.3 Driver Module (Phase 3: Driver Dashboard - The Publisher) - Existing Module (Preserved)
+(Content remains the same as original document)\n
+### 3.4 Student and Parent Module (Phase 4: Parent/Student View - The Subscriber) - Enhanced with Multi-Bus Tracking & Navigation
 (Content remains the same as original document)
 
-### 3.4 Student and Parent Module (Phase 4: Parent/Student View - The Subscriber) - Enhanced with Multi-Bus Tracking & Navigation
-\n#### 3.4.1 Real-time Map Tracking - Enhanced with Multi-Bus Route Visibility
-- **Map Engine**: React-Leaflet + CartoDB Dark Matter Tiles
-- **Visual Style**: Cyber-dark theme with neon green markers\n- **Core Features**:
-  - Automatically load map interface after login
-  - **Display real-time location of assigned bus (primary bus) with prominent neon green pulse marker**
-  - **NEW: Display all other buses traveling on the same route as the student's assigned route**
-  - **Route-based bus filtering**: Query all vehicles assigned to the student's route_id and display their real-time locations
-  - **Visual differentiation**: \n    - Assigned bus: Neon green pulse marker with'MY BUS' label
-    - Other route buses: Blue pulse markers with vehicle ID labels
-  - **Bus marker click interaction**: Click any bus marker to view detailed information popup
-  - Vehicle markers use pulse animation effect when moving (speed > 0)\n  - Display vehicle movement trajectory\n  - Smooth animation transitions: Use CSS transitions to interpolate between coordinate points for sliding effect
-\n#### 3.4.2 Multi-Bus Information Display & Navigation - NEW
-- **Bus List Panel** (Collapsible Side Panel):
-  - Display list of all buses on the student's route
-  - Show bus status: Active/Stopped/Offline
-  - Show current location description (nearest landmark or address)
-  - Show estimated distance from student's pickup stop\n  - Highlight assigned bus with 'MY BUS' badge
-  - Click any bus in list to center map on that bus and open detail view
-\n- **Bus Detail View** (Modal/Popup when clicking bus marker or list item):
-  - Bus ID and vehicle model\n  - Driver name and contact (optional, based on privacy settings)
-  - Current speed and heading
-  - Real-time location coordinates
-  - Distance from student's pickup stop
-  - Estimated Time of Arrival (ETA) to student's pickup stop
-  - **NEW: 'Get Directions' button**
-  - **NEW: 'Missed Bus' indicator** (if bus has already passed the student's stop)
-\n- **Get Directions Feature**:
-  - **Button**: Prominent 'Get Directions' button in bus detail view
-  - **Functionality**: \n    - Calculate route from student's current location (or pickup stop) to the bus's current location
-    - Display turn-by-turn directions on map
-    - Show estimated walking/driving time to reach the bus
-    - Option to open directions in external map app (Google Maps, Apple Maps)\n  - **Use Case**: Help student navigate to catch the bus if they are running late or at a different location
-  - **Implementation**: Use Mapbox Directions API or Google Maps Directions API
-
-- **Missed Bus Indicator**:\n  - **Logic**: If bus has already passed the student's pickup stop (based on stop sequence and GPS trajectory), display 'MISSED BUS' badge
-  - **Visual**: Red badge with warning icon on bus marker and in bus detail view
-  - **Information**: Show time when bus passed the stop, next available bus on route (if any)\n  - **Helpful Action**: Suggest alternative buses or display next scheduled bus time
-
-- **Student Pickup/Drop-off Point Markers**:
-  - Display student's assigned pickup and dropoff stops on map
-  - Show distance between current bus location and pickup point
-  - Estimated Time of Arrival (ETA) for assigned bus
-  - **NEW: Show ETA for all other buses on route to the pickup stop**
-\n#### 3.4.3 Real-time Data Subscription - Enhanced\n- Subscribe to vehicle location updates using Socket.io
-- **Subscribe to all vehicles on the student's assigned route, not just assigned bus**
-- Filter relevant vehicle data by route_id\n- No manual page refresh needed, data automatically pushed\n- Use hashmap data structure for efficient multi-vehicle state management: { busId: { lat, lng, speed, heading, routeId } }
-\n#### 3.4.4 Geofencing and Push Notifications (Phase 5: Advanced) - Enhanced
-- **Distance Calculation**: Use Haversine formula to calculate distance between bus and student pickup point
-- **Arrival Alert**: Trigger push notification when assigned bus distance< 500meters:'Your bus is arriving soon!'
-- **NEW: Missed Bus Alert**: Trigger push notification if assigned bus has passed the pickup stop: 'You missed your bus. Next bus arrives in X minutes.'
-- **Push Notification Implementation** (Mobile):
-  - Use expo-notifications library
-  - Automatically request push permissions
-  - Obtain FCM Token and upload to backend
-  - Configure notification handlers: shouldShowAlert, shouldPlaySound, shouldSetBadge
-  - Listen for notification receipt events and log to console
-- **Trigger Logic**: Real-time monitoring of location changes with automatic detection\n
-#### 3.4.5 Profile Management Access\n(Content remains the same as original document)\n
 ### 3.5 Development and Testing Tools - Preserved
-(Content remains the same as original document)\n
+(Content remains the same as original document)
+
 ## 4. Technical Architecture
 
-### 4.1 Database Design - Enhanced Schema with Optimized Analytics Tables
+### 4.1 Database Design - Enhanced Schema with Settings Tables
 (All existing tables remain the same)\n
-- **hourly_vehicle_stats table - Optimized**:
+- **system_settings table - NEW**:
   - id (primary key)
-  - date (date, indexed)
-  - hour (integer0-23, indexed)
-  - active_vehicle_count (integer)
+  - setting_key (varchar, unique, indexed)
+  - setting_value (JSON)\n  - setting_category (varchar: appearance/security/notifications/localization/files)
+  - description (text)
+  - version (integer, default: 1)
   - created_at (timestamp)
   - updated_at (timestamp)
-  - **Composite index on (date, hour) for efficient querying**
-  - **Automatic cleanup trigger: Delete records older than 24 hours**\n\n- **gps_logs table - Optimized**:
-  - (Existing fields remain the same)
-  - **Automatic cleanup trigger: Delete records older than 24 hours**
-  - **Retention policy enforced at database level via scheduled job**
+- updated_by (foreign key to users.id)
 
-### 4.2 Backend Technology Stack - Enhanced
-(All existing services remain the same)
+- **announcements table - NEW**:
+  - id (primary key)
+  - title (varchar, max 100characters)
+  - content (text, rich HTML)
+  - banner_type (enum: info/warning/critical)
+  - is_active (boolean)\n  - start_date (timestamp, nullable)
+  - end_date (timestamp, nullable)
+  - target_roles (JSON array: ['admin', 'driver', 'student', 'parent'])
+  - is_dismissible (boolean)
+  - created_by (foreign key to users.id)\n  - created_at (timestamp)
+  - updated_at (timestamp)
+\n- **settings_audit_log table - NEW**:
+  - id (primary key)
+  - admin_id (foreign key to users.id)
+  - setting_key (varchar)\n  - old_value (JSON)
+  - new_value (JSON)
+  - action_type (enum: update/reset)\n  - ip_address (varchar)
+  - user_agent (text)
+  - timestamp (timestamp, indexed)
 
-- **NEW: Multi-Bus Route Service**: Query and filter vehicles by route_id for student/parent view
-- **NEW: Navigation Service**: Calculate directions and ETA from student location to bus location using Mapbox/Google Directions API
-- **NEW: Missed Bus Detection Service**: Analyze GPS trajectory and stop sequence to determine if bus has passed student's stop
-- **Optimized Analytics Service**: \n  - Scheduled hourly aggregation job (runs every hour at :00 minutes)
-  - Queries trips table for active vehicles in the past hour
-  - Stores aggregated counts in hourly_vehicle_stats table
-  - Automatic cleanup of data older than 24 hours
-  - Real-time active count calculated from current trips table, not GPS logs
+- **notification_settings table - NEW**:
+  - id (primary key)
+  - event_type (varchar: new_message/task_assignment/bus_arrival/trip_started/trip_completed/system_announcement)
+  - email_enabled (boolean)
+  - inapp_enabled (boolean)
+  - push_enabled (boolean)
+  - is_user_customizable (boolean)
+  - created_at (timestamp)
+  - updated_at (timestamp)
+\n- **user_notification_preferences table - NEW**:
+  - id (primary key)
+  - user_id (foreign key to users.id)
+  - event_type (varchar)\n  - email_enabled (boolean)
+  - inapp_enabled (boolean)
+  - push_enabled (boolean)\n  - created_at (timestamp)
+  - updated_at (timestamp)
+  - Composite unique index on (user_id, event_type)
 
-### 4.3 Frontend Technology Stack - Enhanced
+### 4.2 Backend Technology Stack - Enhanced\n(All existing services remain the same)
+
+- **NEW: Settings Management Service**: CRUD operations for system settings, validation, caching, and broadcasting
+- **NEW: Announcement Service**: Create, update, delete, and retrieve active announcements based on schedule and target roles
+- **NEW: Notification Service**: Send notifications via email, in-app, and push based on user preferences and system defaults
+- **NEW: Localization Service**: Load and serve language strings, handle time zone conversions, format dates/times
+- **NEW: File Upload Service**: Validate file size and type, enforce storage quotas, handle virus scanning and compression
+\n### 4.3 Frontend Technology Stack - Enhanced
 (All existing libraries remain the same)
 
-#### Student/Parent Portal (Mobile) - Enhanced:\n- React Native + Expo\n- expo-notifications (push notifications)
-- React-Leaflet or react-native-maps
-- Socket.io Client
-- Geolocation API
-- expo-image-picker (Profile image selection and upload)
-- **NEW: @mapbox/mapbox-sdk or @react-native-community/google-maps for directions API integration**
-- **NEW: react-native-maps-directions for turn-by-turn navigation display**
-\n### 4.4 Core API Endpoints - Enhanced with New Endpoints
+#### Admin Portal - Enhanced:\n- React + Vite\n- Ant Design or Material-UI (for settings interface components)
+- **NEW: React Color Picker library (react-color or @uiw/react-color)**
+- **NEW: Rich Text Editor (TinyMCE or Quill)**
+- **NEW: React i18next for localization**
+- Redux or Context API for global settings state management
+- Socket.io Client for real-time settings updates
+
+### 4.4 Core API Endpoints - Enhanced with Settings Endpoints
 (All existing endpoints remain the same)
 
-**Student/Parent - Multi-Bus Tracking:**
-- GET /api/student/route-buses/:routeId: Get all buses currently on the student's assigned route with real-time locations
-- GET /api/student/bus-details/:busId: Get detailed information for a specific bus (location, speed, driver, ETA)
-- POST /api/student/get-directions: Calculate directions from student location to bus location (requires student coordinates and bus coordinates)
-- GET /api/student/missed-bus-check/:studentId: Check if assigned bus has passed the student's pickup stop
-- GET /api/student/next-bus/:routeId/:stopId: Get next available bus on route arriving at the stop
+**Admin - Settings Management:**
+- GET /api/admin/settings/all: Retrieve all system settings
+- GET /api/admin/settings/:category: Retrieve settings by category (appearance/security/notifications/localization/files)
+- PUT /api/admin/settings/:key: Update a specific setting
+- POST /api/admin/settings/reset: Reset all settings to defaults\n- POST /api/admin/settings/reset/:category: Reset specific category to defaults
+- GET /api/admin/settings/audit-log: Retrieve settings change history with pagination
 
-**Analytics - Optimized:**
-- GET /api/admin/analytics/hourly-active: Get hourly active vehicle statistics for last 24 hours from hourly_vehicle_stats table
-- GET /api/admin/analytics/current-active: Get current number of active vehicles from trips table (real-time query)
+**Admin - Announcements:**
+- GET /api/admin/announcements: List all announcements with filters (active/inactive, date range)
+- POST /api/admin/announcements: Create new announcement
+- PUT /api/admin/announcements/:id: Update announcement
+- DELETE /api/admin/announcements/:id: Delete announcement
+- GET /api/announcements/active: Get active announcements for current user (based on role and schedule)
+\n**Admin - Notification Settings:**
+- GET /api/admin/notification-settings: Retrieve default notification preferences for all event types
+- PUT /api/admin/notification-settings/:eventType: Update default notification channels for specific event\n- PUT /api/admin/notification-settings/customization-policy: Enable/disable user customization\n\n**User - Notification Preferences:**
+- GET /api/user/notification-preferences: Get user's notification preferences (or defaults if not customized)
+- PUT /api/user/notification-preferences/:eventType: Update user's notification preference for specific event (only if customization allowed)
+\n**Public - Settings:**
+- GET /api/settings/public: Retrieve public settings (theme colors, language options, date format) for unauthenticated users
 \n### 4.5 Socket.io Event Definitions - Enhanced
 (All existing events remain the same)
 
-#### Student/Parent Events - Enhanced:\n- parent:subscribe: Subscribe to specific vehicle location\n- **NEW: parent:subscribe_route: Subscribe to all vehicles on a specific route**
-- bus:location_update: Receive subscribed vehicle location updates
-- **NEW: route:buses_update: Receive location updates for all buses on subscribed route**
-- **NEW: bus:missed_alert: Receive alert when assigned bus has passed the pickup stop**
-\n### 4.6 LiveMap Component Implementation - Enhanced for Multi-Bus Display
-(Existing implementation remains the same with additions)
-
-#### Component Interface - Enhanced:
+#### Settings Events - NEW:
+- admin:settings_updated: Broadcast to all clients when settings are changed (payload: { category, updatedSettings })
+- admin:settings_reset: Broadcast when settings are reset to defaults (payload: { category })
+- admin:announcement_published: Broadcast when new announcement is published (payload: { announcement })
+- admin:announcement_dismissed: Notify when user dismisses announcement (payload: { announcementId, userId })
+\n### 4.6 Settings Management Component Implementation - NEW
+\n#### SettingsDashboard Component (src/components/admin/SettingsDashboard.jsx):
 ```typescript
-interface VehicleLocation {
-  id: string;\n  name: string;
-  lat: number;
-  lng: number;
-  speed: number;
-  heading: number;
-  status: 'moving' | 'stopped' | 'offline';
-  isAssignedBus: boolean; // NEW: Flag to differentiate assigned bus
-  routeId: string; // NEW: Route identifier\n  missedStop: boolean; // NEW: Flag if bus has passed student's stop
-}\n\ninterface LiveMapProps {
-  center?: [number, number];
-  zoom?: number;
-  vehicles?: VehicleLocation[];
-  studentPickupStop?: { lat: number; lng: number; name: string }; // NEW\n  onBusClick?: (busId: string) => void; // NEW: Callback when bus marker is clicked
-}\n```
-
-#### State Management - Enhanced:
-- Store vehicle states using hashmap structure: { busId: { lat, lng, speed, heading, tripStatus, routeId, isAssignedBus, missedStop } }
-- Dynamically update via Socket.io listening to route:buses_update event
-- Vehicle markers show/hide pulse animation based on speed value
-- Differentiate assigned bus marker (neon green) from other route buses (blue)
-\n### 4.7 Multi-Bus Tracking Component Implementation - NEW
-\n#### BusListPanel Component (src/components/student/BusListPanel.jsx):
-```typescript
-interface Bus {
-  id: string;\n  vehicleId: string;
-  driverName: string;
-  currentLocation: { lat: number; lng: number };
-  speed: number;
-  status: 'active' | 'stopped' | 'offline';
-  distanceFromStop: number; // in meters
-  eta: number; // in minutes
-  isAssignedBus: boolean;\n  missedStop: boolean;\n}\n
-interface BusListPanelProps {
-  buses: Bus[];
-  onBusSelect: (busId: string) => void;
-  studentPickupStop: { lat: number; lng: number; name: string };
-}\n```
-
-#### BusDetailModal Component (src/components/student/BusDetailModal.jsx):\n```typescript
-interface BusDetailModalProps {
-  bus: Bus;
-  studentLocation: { lat: number; lng: number };
-  onGetDirections: (busId: string) => void;\n  onClose: () => void;
+interface SettingsDashboardProps {
+  currentAdmin: User;
+}\n
+interface SystemSettings {
+  appearance: {\n    primaryColor: string;
+    secondaryColor: string;
+    accentColor: string;
+  };
+  security: {\n    passwordMinLength: number;
+    passwordRequireUppercase: boolean;
+    passwordRequireLowercase: boolean;
+    passwordRequireNumbers: boolean;
+    passwordRequireSpecialChars: boolean;
+    twoFactorEnabled: boolean;
+sessionTimeout: number;
+  };\n  notifications: {
+    defaultChannels: Record<string, { email: boolean; inapp: boolean; push: boolean }>;
+    allowUserCustomization: boolean;
+  };
+  localization: {\n    defaultLanguage: string;\n    supportedLanguages: string[];
+    defaultTimeZone: string;
+    dateFormat: string;
+    timeFormat: '12h' | '24h';
+  };
+  files: {
+    maxFileSize: number;
+    allowedExtensions: string[];
+    blockedExtensions: string[];
+perUserStorageLimit: number;
+};
 }
 ```
 
-#### NavigationView Component (src/components/student/NavigationView.jsx):
+#### ColorPickerSection Component (src/components/admin/settings/ColorPickerSection.jsx):
 ```typescript
-interface NavigationViewProps {
-  origin: { lat: number; lng: number };
-  destination: { lat: number; lng: number };
-  onOpenExternalMap: () => void;
+interface ColorPickerSectionProps {\n  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  onColorChange: (colorType: 'primary' | 'secondary' | 'accent', color: string) => void;
+  onSave: () => void;
+  onReset: () => void;
 }\n```
 
-### 4.8 Optimized Analytics Service Implementation - NEW
+#### AnnouncementEditor Component (src/components/admin/settings/AnnouncementEditor.jsx):
+```typescript
+interface Announcement {
+  id?: string;
+  title: string;\n  content: string;
+  bannerType: 'info' | 'warning' | 'critical';
+  isActive: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  targetRoles: string[];
+  isDismissible: boolean;
+}\n\ninterface AnnouncementEditorProps {
+  announcement?: Announcement;
+  onSave: (announcement: Announcement) => void;
+  onCancel: () => void;
+}\n```
 
-#### Hourly Aggregation Job (backend/jobs/hourlyAggregation.js):\n- **Scheduled Job**: Runs every hour at :00 minutes using node-cron or similar scheduler
-- **Logic**:
-  1. Query trips table for all trips with status = 'active' in the past hour
-  2. Count distinct vehicle_id values
-  3. Insert aggregated count into hourly_vehicle_stats table with current date and hour
-  4. Delete records from hourly_vehicle_stats older than 24 hours
-  5. Delete records from gps_logs older than 24 hours
-- **Error Handling**: Log errors, retry on failure, send alerts if job fails
-
-#### Real-time Active Count Service (backend/services/activeVehicleService.js):
-- **Function**: getCurrentActiveCount()
-- **Logic**: Query trips table for count of vehicles with status = 'active' at current moment
-- **Caching**: Cache result for 30 seconds to reduce database load
-- **Socket.io Broadcast**: Emit admin:active_count_update event every 30 seconds with current count
+#### SecuritySettingsPanel Component (src/components/admin/settings/SecuritySettingsPanel.jsx):
+```typescript
+interface SecuritySettingsPanelProps {
+  settings: SystemSettings['security'];
+  onUpdate: (settings: SystemSettings['security']) => void;
+  onReset: () => void;
+}\n```
 
 ## 5. Real-time Tracking Implementation - Enhanced
-(All existing sections remain the same with additions)
+(All existing sections remain the same)
 
-### 5.3 Student/Parent Side (Data Subscriber) - Enhanced
-- Establish Socket.io connection and subscribe to assigned route (not just assigned vehicle)
-- Listen for route:buses_update events to receive locations of all buses on route
-- Receive latest location and update map markers for all route buses
-- Use CSS transitions for smooth movement animations
-- Receive push notification alerts for assigned bus arrival and missed bus\n- Display bus list panel with all route buses\n- Handle bus marker click events to show bus detail modal
-- Implement'Get Directions' functionality with external map integration
+### 5.5 Settings Synchronization - NEW
+- Admin updates settings via settings dashboard
+- Backend validates and saves settings to database
+- Backend broadcasts 'admin:settings_updated' event via Socket.io to all connected clients
+- All clients (admin, driver, student, parent) receive event and update local settings state
+- Frontend applies new settings immediately:\n  - Theme colors: Update CSS variables
+  - Language: Reload i18n strings
+  - Notification preferences: Update notification service configuration
+  - Session timeout: Reset idle timer
+- No page refresh required for settings to take effect
 
-### 5.4 Admin Side (Global Monitoring) - Optimized
-- Establish Socket.io connection\n- Listen for admin:all_buses_update events\n- Real-time update of all vehicle locations\n- Use hashmap for efficient multi-vehicle state management
-- **Analytics Monitoring - Optimized**:
-  - Listen for admin:active_count_update events (every 30 seconds)
-  - Query hourly_vehicle_stats table for last 24 hours of data (on page load and hourly refresh)
-  - Display hourly activity charts with data from database, not real-time GPS logs
-  - Show current active vehicle count from real-time query of trips table
+## 6. Development Phase Planning - Updated with Settings Module Phase\n(All existing phases remain the same)
 
-## 6. Development Phase Planning - Updated with New Phases
-(All existing phases remain the same with additions)
-
-### Phase 13: Multi-Bus Tracking & Navigation (Priority: High, Complexity: Medium) - NEW
-- **Implement Multi-Bus Route Query Service**:
-  - Backend API to query all vehicles on a specific route
-  - Filter vehicles by route_id and return real-time locations
-- **Develop Bus List Panel Component**:
-  - Display all buses on student's route\n  - Show bus status, distance, and ETA
-  - Highlight assigned bus\n- **Implement Bus Detail Modal**:\n  - Show detailed bus information\n  - Display 'Get Directions' button
-  - Show 'Missed Bus' indicator if applicable
-- **Integrate Navigation Service**:
-  - Use Mapbox Directions API or Google Maps Directions API
-  - Calculate route from student location to bus location
-  - Display turn-by-turn directions on map
-  - Implement'Open in External Map' functionality
-- **Implement Missed Bus Detection**:
-  - Analyze GPS trajectory and stop sequence\n  - Determine if bus has passed student's stop
-  - Display missed bus indicator and send push notification
-  - Show next available bus information
-- **Enhance Socket.io Subscriptions**:
-  - Implement route:buses_update event for multi-bus tracking
-  - Implement bus:missed_alert event for missed bus notifications
-- **Update Student/Parent Map Interface**:
-  - Display multiple bus markers with differentiation
-  - Implement bus marker click handlers
-  - Integrate bus list panel and detail modal
+### Phase 15: Centralized Settings Management Module (Priority: High, Complexity: Medium) - NEW
+- **Implement Database Schema**:
+  - Create system_settings, announcements, settings_audit_log, notification_settings, user_notification_preferences tables
+  - Set up indexes and foreign key constraints
+  - Create default settings seed data
+- **Develop Backend Settings Service**:
+  - CRUD API endpoints for settings management
+  - Validation logic for all setting types
+  - Redis caching layer for settings
+  - Audit logging for all setting changes
+- **Build Settings Dashboard UI**:
+  - Sidebar navigation with categorized sections
+  - Color picker interface for theme customization
+  - Rich text editor for announcements
+  - Form inputs for security, notification, localization, and file settings
+  - Save, reset, and cancel buttons with confirmation dialogs
+- **Implement Real-Time Settings Distribution**:
+  - Socket.io events for settings updates
+  - Frontend global state management for settings
+  - Dynamic CSS variable updates for theme colors
+  - i18n integration for language switching
+- **Develop Announcement System**:
+  - Announcement editor with scheduling and targeting
+  - Banner display component for all user interfaces
+  - Dismissible banner logic with user tracking
+- **Implement Notification Preferences**:
+  - Default notification settings for all event types
+  - User customization interface (if allowed)
+  - Backend notification service integration
+- **Build File Upload Validation**:
+  - File size and type validation on upload
+  - Storage quota enforcement
+  - Error messages with configured limits
 - **Testing**:
-  - Test multi-bus display with GPS simulator
-  - Test navigation directions calculation
-  - Test missed bus detection logic
-  - Test push notifications for missed bus\n  - Test external map integration
-
-### Phase 14: Analytics Optimization (Priority: High, Complexity: Low) - NEW
-- **Implement Hourly Aggregation Job**:
-  - Set up scheduled job to run every hour\n  - Aggregate active vehicle counts from trips table
-  - Store results in hourly_vehicle_stats table
-- **Implement Automatic Data Cleanup**:
-  - Create database triggers or scheduled jobs to delete data older than 24 hours
-  - Apply to gps_logs and hourly_vehicle_stats tables\n- **Optimize Real-time Active Count Service**:\n  - Query trips table instead of GPS logs for current active count
-  - Implement caching with 30-second TTL
-- **Update Admin Analytics Dashboard**:
-  - Query hourly_vehicle_stats table for chart data
-  - Display last 24 hours of hourly data
-  - Show real-time active count from trips table query
-- **Testing**:
-  - Test hourly aggregation job execution
-  - Verify data cleanup after 24 hours
-  - Test real-time active count accuracy
-  - Verify analytics dashboard displays correct data
-  - Test performance under load
+  - Test all settings CRUD operations
+  - Verify real-time settings updates across all clients
+  - Test theme color changes apply immediately
+  - Test announcement scheduling and targeting
+  - Test password complexity enforcement
+  - Test 2FA requirement enforcement
+  - Test notification channel preferences
+  - Test file upload restrictions
+  - Test reset to defaults functionality
+  - Test audit log accuracy
+  - Verify settings persist after system restart
 
 ## 7. Testing and Deployment Process - Enhanced
-(All existing sections remain the same with additions)
-\n### 7.1 Development Testing Process - Enhanced
+(All existing sections remain the same)
+
+### 7.1 Development Testing Process - Enhanced
 (All existing test steps remain the same with additions)
-\n21. **Test Multi-Bus Tracking (NEW)**:
-    - Log in as student
-    - Verify assigned bus is displayed with'MY BUS' label and neon green marker
-    - Verify all other buses on the same route are displayed with blue markers
-    - Click on different bus markers and verify detail modal opens
-    - Verify bus list panel shows all route buses with correct information
-    - Test bus marker click-to-center functionality
-    - Verify real-time location updates for all route buses
-\n22. **Test Navigation Feature (NEW)**:
-    - Open bus detail modal for any bus
-    - Click 'Get Directions' button\n    - Verify directions are calculated and displayed on map
-    - Verify estimated time and distance are shown
-    - Test 'Open in External Map' functionality (Google Maps/Apple Maps)
-    - Verify directions update if bus moves
 
-23. **Test Missed Bus Detection (NEW)**:\n    - Simulate bus passing student's pickup stop using GPS simulator
-    - Verify'MISSED BUS' indicator appears on bus marker and in detail modal
-    - Verify push notification is sent to student
-    - Verify next available bus information is displayed
-    - Test with multiple buses on route
-
-24. **Test Optimized Analytics (NEW)**:
-    - Verify hourly aggregation job runs every hour
-    - Check hourly_vehicle_stats table for new records
-    - Verify data older than 24 hours is automatically deleted
-    - Verify admin dashboard displays data from hourly_vehicle_stats table
-    - Verify real-time active count is accurate and updates every 30 seconds
-    - Test performance with large number of vehicles
+25. **Test Settings Management Module (NEW)**:
+    - Log in as super admin
+    - Navigate to Settings dashboard
+    - Test color picker: Change primary, secondary, and accent colors
+    - Verify live preview updates in real-time
+    - Save color changes and verify application-wide theme update
+    - Open another browser/device and verify theme changes applied
+    - Test announcement creation with rich text editor
+    - Set announcement schedule and target roles
+    - Verify announcement displays for targeted users only
+    - Test announcement dismissal functionality
+    - Update password complexity requirements
+    - Create new user and verify password validation enforces new rules
+    - Enable 2FA requirement and verify users are prompted to set up 2FA
+    - Change session timeout and verify auto-logout after configured time
+    - Update default notification channels for an event type
+    - Verify notifications are sent via configured channels
+    - Test user notification customization (if allowed)
+    - Change default language and verify UI language updates
+    - Change date/time format and verify display format updates
+    - Update file upload limits and verify file validation enforces new limits
+    - Test reset to defaults for each settings section
+    - Test global reset to defaults with confirmation
+    - Verify audit log records all setting changes with correct details
 
 ### 7.2 Key Verification Points - Enhanced
 (All existing verification points remain the same with additions)
 
-- **Multi-Bus Tracking Verification (NEW)**:
-  - All buses on student's route are displayed correctly
-  - Assigned bus is visually differentiated from other buses
-  - Bus markers update in real-time
-  - Bus list panel shows accurate information
-  - Bus detail modal displays correct data
-  - Socket.io route subscription works correctly
-\n- **Navigation Feature Verification (NEW)**:
-  - Directions are calculated accurately
-  - Turn-by-turn directions are displayed clearly
-  - Estimated time and distance are correct
-  - External map integration works on iOS and Android
-  - Directions update dynamically as bus moves
-\n- **Missed Bus Detection Verification (NEW)**:
-  - Missed bus logic is accurate based on GPS trajectory and stop sequence
-  - Missed bus indicator displays correctly
-  - Push notifications are sent reliably
-  - Next bus information is accurate
-\n- **Optimized Analytics Verification (NEW)**:
-  - Hourly aggregation job runs on schedule without errors
-  - Data cleanup executes correctly after 24 hours
-  - Real-time active count is accurate and performant
-  - Admin dashboard queries hourly_vehicle_stats table, not GPS logs
-  - Analytics performance is optimized with reduced database load
+- **Settings Management Verification (NEW)**:
+  - All settings save correctly to database
+  - Settings persist after system restart
+  - Real-time settings updates work across all connected clients
+  - Theme color changes apply immediately without page refresh
+  - Announcements display correctly based on schedule and target roles
+  - Password complexity rules are enforced on user registration and password change
+  - 2FA requirement is enforced during login
+  - Session timeout works correctly with auto-logout
+  - Notification preferences control notification delivery channels
+  - Language and date/time format changes apply correctly
+  - File upload validation enforces configured limits
+  - Reset to defaults restores correct default values
+  - Audit log accurately records all setting changes
+  - Settings interface is user-friendly and well-documented
 
 ### 7.3 Deployment Checklist - Enhanced
-(All existing checklist items remain the same with additions)\n
-- **Multi-Bus Tracking Deployment (NEW)**:
-  - Configure Mapbox Directions API or Google Maps Directions API keys
-  - Test navigation service in production environment
-  - Verify Socket.io route subscription works in production
-  - Test external map integration on production mobile apps
-  - Configure push notifications for missed bus alerts
-\n- **Analytics Optimization Deployment (NEW)**:
-  - Set up hourly aggregation job scheduler (cron job or cloud scheduler)
-  - Configure database cleanup triggers or scheduled jobs
-  - Verify24-hour data retention policy is enforced
-  - Test analytics dashboard performance in production
-  - Monitor hourly aggregation job execution and errors
-  - Set up alerts for job failures
+(All existing checklist items remain the same with additions)
 
-## 8. Security and Performance - Enhanced
+- **Settings Module Deployment (NEW)**:
+  - Run database migrations to create settings tables
+  - Seed default settings data
+  - Configure Redis cache for settings
+  - Set up SMTP server for email notifications (if not already configured)
+  - Configure FCM server key for push notifications (if not already configured)
+  - Test settings API endpoints in production\n  - Verify Socket.io settings events work in production
+  - Test theme color changes in production environment
+  - Test announcement display in production\n  - Verify password complexity enforcement in production
+  - Test 2FA requirement in production
+  - Verify file upload validation in production
+  - Set up monitoring for settings service errors
+  - Configure backup for system_settings table
+\n## 8. Security and Performance - Enhanced
 (All existing security measures remain the same with additions)
-\n- **Multi-Bus Tracking Security (NEW)**:
-  - Validate student can only view buses on their assigned route
-  - Protect driver personal information in bus detail view
-  - Rate limit navigation API requests to prevent abuse
-  - Validate student location data before calculating directions
-\n- **Analytics Performance Optimization (NEW)**:
-  - Hourly aggregation reduces real-time query load on GPS logs
-  - 24-hour data retention minimizes database size and improves query speed
-  - Caching of real-time active count reduces database queries
-  - Indexed queries on hourly_vehicle_stats table for fast retrieval
-  - Scheduled cleanup jobs run during low-traffic hours
 
-## 9. Website Design Style - Enhanced
+- **Settings Module Security (NEW)**:
+  - Restrict settings management access to super admin role only
+  - Validate all setting values on backend before saving
+  - Sanitize rich text content in announcements to prevent XSS attacks
+  - Encrypt sensitive settings (SMTP password, API keys) in database
+  - Rate limit settings API endpoints to prevent abuse
+  - Log all settings changes with admin ID and IP address for audit trail
+  - Require confirmation for destructive actions (reset to defaults)\n\n- **Settings Performance Optimization (NEW)**:
+  - Cache frequently accessed settings in Redis with5-minute TTL
+  - Use Socket.io for real-time settings distribution instead of polling
+  - Lazy load settings sections in admin dashboard
+  - Optimize database queries with indexes on setting_key and setting_category
+  - Compress announcement content before storing in database
+  - Use CDN for serving theme CSS files with dynamic variables
+\n## 9. Website Design Style - Enhanced
 (All existing design elements remain the same with additions)
-\n- **Color Scheme - Enhanced**:
-  - Assigned bus marker: #10b981 (neon green with'MY BUS' label)
-  - Other route buses marker: #3b82f6 (tech blue with vehicle ID label)
-  - Missed bus indicator: #ef4444 (red badge with warning icon)
-  - Navigation route line: #10b981 (neon green polyline)
-  - Get Directions button: #10b981 (neon green with white text)
-\n- **Visual Details - Enhanced**:
-  - **Bus markers**: Differentiated by color and label (assigned bus vs. other buses)
-  - **Bus list panel**: Card-based layout with status indicators, collapsible design
-  - **Bus detail modal**: Centered overlay with bus information, prominent 'Get Directions' button\n  - **Missed bus badge**: Red badge with warning icon, displayed on marker and in modal
-  - **Navigation view**: Turn-by-turn directions with route polyline, distance and time display
-  - **External map button**: Icon button to open directions in Google Maps/Apple Maps
+\n- **Settings Dashboard Design**:
+  - **Layout**: Sidebar navigation on left (collapsible on mobile), main content area on right
+  - **Color Scheme**: Dark background (#1a1a1a) with neon green accents (#10b981) for active items
+  - **Typography**: Clear section headers (24px bold), setting labels (14px medium), help text (12px regular)
+  - **Form Elements**: \n    - Input fields: Dark background with light border, neon green focus state
+    - Buttons: Primary (neon green), Secondary (gray), Danger (red)\n    - Toggles: Neon green when enabled, gray when disabled
+    - Color pickers: Inline preview swatch with hex code input
+  - **Cards**: Each settings section in a card with subtle shadow and rounded corners (8px)
+  - **Spacing**: Consistent padding (16px) and margins (24px between sections)
+  - **Icons**: Use Feather Icons or Heroicons for settings categories
+  - **Responsive**: Mobile-friendly with stacked layout and bottom navigation
 
-- **Layout Approach - Enhanced**:
-  - **Student/Parent Map View**:
-    - Full-screen map with multiple bus markers
-    - Collapsible bus list panel on left side (mobile: bottom sheet)
-    - Bus detail modal opens on marker click (centered overlay)
-    - Navigation view replaces map when directions are active
-    - Bottom bar with student pickup stop information and ETA
-  - **Bus List Panel Layout**:
-    - Vertical list of bus cards\n    - Each card shows: Bus ID, status, distance, ETA, 'MY BUS' badge (if assigned)
-    - Click card to center map and open detail modal
-  - **Bus Detail Modal Layout**:\n    - Top section: Bus ID, driver name, status\n    - Middle section: Current location, speed, distance from stop, ETA
-    - Bottom section: 'Get Directions' button, 'Close' button\n    - Missed bus indicator (if applicable) displayed prominently at top
+- **Announcement Banner Design**:
+  - **Info Banner**: Blue background (#3b82f6) with info icon, white text\n  - **Warning Banner**: Yellow background (#f59e0b) with warning icon, dark text
+  - **Critical Banner**: Red background (#ef4444) with alert icon, white text
+  - **Position**: Fixed at top of page, full width, z-index above other content
+  - **Dismissible**: Close button (X) on right side if configured as dismissible
+  - **Animation**: Slide down from top on display, fade out on dismiss
 
 ## 10. Admin Module Audit & Enhancement Summary
-(Content remains the same as original document)\n
+(Content remains the same as original document)
+
 ## 11. New Features Summary
 \n### 11.1 Multi-Bus Route Tracking for Students
-- Students can now view all buses traveling on their assigned route, not just their assigned bus
-- Visual differentiation between assigned bus (neon green) and other route buses (blue)
-- Real-time location updates for all route buses via Socket.io
-- Bus list panel showing all route buses with status, distance, and ETA
-- Click any bus marker or list item to view detailed information
-\n### 11.2 Navigation Assistance
-- 'Get Directions' button in bus detail view
-- Calculate route from student's current location to bus location
-- Display turn-by-turn directions on map with estimated time and distance
-- Option to open directions in external map app (Google Maps, Apple Maps)
-- Helps students navigate to catch the bus if running late
+(Content remains the same as original document)
 
-### 11.3 Missed Bus Detection\n- Automatic detection when assigned bus has passed the student's pickup stop
-- 'MISSED BUS' indicator displayed on bus marker and in detail modal\n- Push notification alert sent to student when bus is missed
-- Display next available bus information and estimated arrival time
-- Helps students plan alternative transportation or catch next bus
+### 11.2 Navigation Assistance\n(Content remains the same as original document)
+
+### 11.3 Missed Bus Detection
+(Content remains the same as original document)
 
 ### 11.4 Optimized Hourly Analytics
-- Hourly aggregation job runs every hour to calculate active vehicle counts
-- Data stored in hourly_vehicle_stats table with 24-hour retention
-- Automatic cleanup of GPS logs and hourly stats older than 24 hours
-- Real-time active count calculated from trips table, not GPS logs
-- Improved performance and reduced database load for admin analytics dashboard
-- Admin dashboard displays last 24 hours of hourly data from database, not real-time calculations
+(Content remains the same as original document)
+
+### 11.5 Centralized Settings Management Module - NEW
+- **UI Theme & Color Customization**: Administrators can select primary, secondary, and accent colors that apply application-wide for all users immediately
+- **System-Wide Announcements**: Rich text editor for creating scheduled announcements with role-based targeting and dismissible banners
+- **Privacy & Security Settings**: Configure password complexity, enable 2FA for all users, set session timeout duration
+- **Notification Preferences**: Define default notification channels for system events with option to allow user customization
+- **Localization Settings**: Set default language, time zone, and date/time format for entire application
+- **File Upload Limits**: Configure maximum file size, permitted file types, and storage quotas\n- **Real-Time Settings Distribution**: All setting changes broadcast to connected clients via Socket.io for immediate application\n- **Reset to Defaults**: Functionality to reset all settings or specific categories to factory defaults
+- **Audit Trail**: Complete logging of all setting changes with admin ID, timestamp, and old/new values
+- **User-Friendly Interface**: Logically grouped settings with clear documentation and confirmation dialogs for critical actions

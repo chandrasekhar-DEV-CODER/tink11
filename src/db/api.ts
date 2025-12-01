@@ -897,3 +897,226 @@ export const studentPortalApi = {
     };
   },
 };
+
+// System Settings API
+export const settingsApi = {
+  async getAllSettings() {
+    const { data, error } = await supabase
+      .from('system_settings')
+      .select('*')
+      .order('category', { ascending: true })
+      .order('key', { ascending: true });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getSettingsByCategory(category: string) {
+    const { data, error } = await supabase
+      .from('system_settings')
+      .select('*')
+      .eq('category', category)
+      .order('key', { ascending: true });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getSetting(category: string, key: string) {
+    const { data, error } = await supabase
+      .from('system_settings')
+      .select('*')
+      .eq('category', category)
+      .eq('key', key)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateSetting(category: string, key: string, value: any, updatedBy?: string) {
+    const { data, error } = await supabase
+      .rpc('update_setting', {
+        p_category: category,
+        p_key: key,
+        p_value: JSON.stringify(value),
+        p_updated_by: updatedBy || null
+      });
+    if (error) throw error;
+    return data;
+  },
+
+  async updateMultipleSettings(settings: Array<{ category: string; key: string; value: any }>, updatedBy?: string) {
+    const promises = settings.map(setting =>
+      this.updateSetting(setting.category, setting.key, setting.value, updatedBy)
+    );
+    await Promise.all(promises);
+  },
+
+  async getPublicSettings() {
+    const { data, error } = await supabase
+      .from('system_settings')
+      .select('*')
+      .eq('is_public', true)
+      .order('category', { ascending: true });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getSettingsGroupedByCategory() {
+    const settings = await this.getAllSettings();
+    const grouped: Record<string, any> = {};
+    
+    settings.forEach((setting: any) => {
+      if (!grouped[setting.category]) {
+        grouped[setting.category] = {};
+      }
+      // Parse JSON value
+      let parsedValue = setting.value;
+      if (typeof setting.value === 'string') {
+        try {
+          parsedValue = JSON.parse(setting.value);
+        } catch {
+          parsedValue = setting.value;
+        }
+      }
+      grouped[setting.category][setting.key] = parsedValue;
+    });
+    
+    return grouped;
+  },
+
+  async resetToDefaults() {
+    // This would require re-inserting default values
+    // For now, we'll just return a message
+    throw new Error('Reset to defaults must be performed by database administrator');
+  },
+};
+
+// System Announcements API
+export const announcementsApi = {
+  async getAll() {
+    const { data, error } = await supabase
+      .from('system_announcements')
+      .select('*')
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getActive(audience: string = 'all') {
+    const { data, error } = await supabase
+      .rpc('get_active_announcements', { p_audience: audience });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string) {
+    const { data, error } = await supabase
+      .from('system_announcements')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async create(announcement: {
+    title: string;
+    content: string;
+    type?: string;
+    is_active?: boolean;
+    start_date?: string;
+    end_date?: string | null;
+    target_audience?: string;
+    priority?: number;
+    created_by?: string | null;
+  }) {
+    const { data, error } = await supabase
+      .from('system_announcements')
+      .insert({
+        title: announcement.title,
+        content: announcement.content,
+        type: announcement.type || 'info',
+        is_active: announcement.is_active !== undefined ? announcement.is_active : true,
+        start_date: announcement.start_date || new Date().toISOString(),
+        end_date: announcement.end_date || null,
+        target_audience: announcement.target_audience || 'all',
+        priority: announcement.priority || 0,
+        created_by: announcement.created_by || null,
+      })
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<{
+    title: string;
+    content: string;
+    type: string;
+    is_active: boolean;
+    start_date: string;
+    end_date: string | null;
+    target_audience: string;
+    priority: number;
+  }>) {
+    const { data, error } = await supabase
+      .from('system_announcements')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase
+      .from('system_announcements')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async toggleActive(id: string, isActive: boolean) {
+    return this.update(id, { is_active: isActive });
+  },
+};
+
+// Settings Audit Log API
+export const settingsAuditApi = {
+  async getAll(limit: number = 100) {
+    const { data, error } = await supabase
+      .from('settings_audit_log')
+      .select('*')
+      .order('changed_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByCategory(category: string, limit: number = 50) {
+    const { data, error } = await supabase
+      .from('settings_audit_log')
+      .select('*')
+      .eq('setting_category', category)
+      .order('changed_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getBySetting(category: string, key: string, limit: number = 20) {
+    const { data, error } = await supabase
+      .from('settings_audit_log')
+      .select('*')
+      .eq('setting_category', category)
+      .eq('setting_key', key)
+      .order('changed_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+};

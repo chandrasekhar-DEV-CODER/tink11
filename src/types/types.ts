@@ -354,3 +354,118 @@ export interface StudentWithRelations extends StudentAuth {
   parent?: ParentAuth | null;
   vehicle?: TransportVehicle | null;
 }
+
+// System Settings Types
+export type SettingDataType = 'string' | 'number' | 'boolean' | 'json' | 'color';
+export type AnnouncementType = 'info' | 'warning' | 'success' | 'error';
+export type TargetAudience = 'all' | 'students' | 'drivers' | 'admins' | 'parents';
+
+export interface SystemSetting {
+  id: string;
+  category: string;
+  key: string;
+  value: any;
+  data_type: SettingDataType;
+  description: string | null;
+  is_public: boolean;
+  updated_by: string | null;
+  updated_at: string;
+  created_at: string;
+}
+
+export interface SystemAnnouncement {
+  id: string;
+  title: string;
+  content: string;
+  type: AnnouncementType;
+  is_active: boolean;
+  start_date: string;
+  end_date: string | null;
+  target_audience: TargetAudience;
+  priority: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SettingsAuditLog {
+  id: string;
+  setting_category: string;
+  setting_key: string;
+  old_value: any;
+  new_value: any;
+  changed_by: string | null;
+  changed_at: string;
+  ip_address: string | null;
+  user_agent: string | null;
+}
+
+export interface SettingsByCategory {
+  [category: string]: {
+    [key: string]: any;
+  };
+}
+
+export interface ThemeSettings {
+  primary_color: string;
+  secondary_color: string;
+  accent_color: string;
+  dark_mode_enabled: boolean;
+  custom_logo_url: string;
+}
+
+export interface SecuritySettings {
+  password_min_length: number;
+  password_require_uppercase: boolean;
+  password_require_lowercase: boolean;
+  password_require_numbers: boolean;
+  password_require_special: boolean;
+  two_factor_enabled: boolean;
+  session_timeout_minutes: number;
+  max_login_attempts: number;
+  lockout_duration_minutes: number;
+}
+
+export interface NotificationSettings {
+  email_enabled: boolean;
+  sms_enabled: boolean;
+  push_enabled: boolean;
+  notify_trip_start: boolean;
+  notify_approaching_stop: boolean;
+  notify_trip_delay: boolean;
+  notification_quiet_hours_start: string;
+  notification_quiet_hours_end: string;
+}
+
+export interface LocalizationSettings {
+  default_language: string;
+  default_timezone: string;
+  date_format: string;
+  time_format: string;
+  currency: string;
+  distance_unit: string;
+}
+
+export interface UploadSettings {
+  max_file_size_mb: number;
+  allowed_file_types: string[];
+  max_files_per_upload: number;
+  enable_virus_scan: boolean;
+}
+
+export interface ApplicationSettings {
+  app_name: string;
+  support_email: string;
+  support_phone: string;
+  maintenance_mode: boolean;
+  allow_registration: boolean;
+  terms_url: string;
+  privacy_url: string;
+}
+
+export interface TrackingSettings {
+  location_update_interval: number;
+  location_history_days: number;
+  geofence_radius_meters: number;
+  speed_limit_kmh: number;
+}
