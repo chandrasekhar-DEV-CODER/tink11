@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/context/AuthContext';
@@ -5,7 +6,6 @@ import routes from './routes';
 import Sidebar from '@/components/common/Sidebar';
 import Header from '@/components/common/Header';
 import Login from '@/pages/Login';
-import { useState } from 'react';
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
