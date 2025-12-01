@@ -13,6 +13,10 @@ import ManageStudents from './pages/admin/ManageStudents';
 import ManageParents from './pages/admin/ManageParents';
 import DriverDashboard from './pages/driver/DriverDashboard';
 import LiveTrackingPage from './pages/tracking/LiveTracking';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import VerifyOTP from './pages/auth/VerifyOTP';
+import ResetPassword from './pages/auth/ResetPassword';
+import ProfileSettings from './pages/ProfileSettings';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -97,6 +101,29 @@ const routes: RouteConfig[] = [
     name: 'Settings',
     path: '/settings',
     element: <Settings />
+  },
+  {
+    name: 'Profile Settings',
+    path: '/profile',
+    element: <ProfileSettings />
+  },
+  {
+    name: 'Forgot Password',
+    path: '/forgot-password',
+    element: <ForgotPassword />,
+    visible: false
+  },
+  {
+    name: 'Verify OTP',
+    path: '/verify-otp',
+    element: <VerifyOTP />,
+    visible: false
+  },
+  {
+    name: 'Reset Password',
+    path: '/reset-password',
+    element: <ResetPassword />,
+    visible: false
   }
 ];
 

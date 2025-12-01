@@ -108,7 +108,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
               <Button
                 variant="ghost"
                 className="w-full justify-start"
-                onClick={() => navigate('/settings')}
+                onClick={() => navigate('/profile')}
               >
                 <User className="w-4 h-4 mr-2" />
                 Profile Settings
