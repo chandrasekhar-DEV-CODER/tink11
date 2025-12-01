@@ -23,6 +23,26 @@ export interface Vehicle {
   driver_id: string | null;
   last_location: string | null;
   last_location_time: string | null;
+  vin: string | null;
+  year: number | null;
+  insurance_expiry: string | null;
+  last_maintenance_date: string | null;
+  next_maintenance_date: string | null;
+  maintenance_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VehicleMaintenanceRecord {
+  id: string;
+  vehicle_id: string;
+  maintenance_type: string;
+  description: string | null;
+  cost: number | null;
+  performed_by: string | null;
+  performed_at: string;
+  next_due_date: string | null;
+  notes: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -138,6 +158,20 @@ export interface StudentWithDetails extends Student {
 
 export interface StopWithRoute extends Stop {
   route?: Route | null;
+}
+
+export interface RouteWithStops extends Route {
+  stops?: Stop[];
+  vehicle?: Vehicle | null;
+  driver?: Profile | null;
+}
+
+export interface RouteWithDetails extends Route {
+  stops?: Stop[];
+  stop_count?: number;
+  student_count?: number;
+  assigned_vehicle?: Vehicle | null;
+  assigned_driver?: Profile | null;
 }
 
 export interface LocationPoint {

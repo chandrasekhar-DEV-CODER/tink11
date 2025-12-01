@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -47,6 +48,12 @@ export default function Vehicles() {
     imei: '',
     status: 'active' as 'active' | 'maintenance' | 'retired',
     driver_id: '',
+    vin: '',
+    year: '',
+    insurance_expiry: '',
+    last_maintenance_date: '',
+    next_maintenance_date: '',
+    maintenance_notes: '',
   });
 
   useEffect(() => {
@@ -80,6 +87,12 @@ export default function Vehicles() {
         imei: formData.imei || null,
         status: formData.status,
         driver_id: formData.driver_id && formData.driver_id !== 'none' ? formData.driver_id : null,
+        vin: formData.vin || null,
+        year: formData.year ? parseInt(formData.year) : null,
+        insurance_expiry: formData.insurance_expiry || null,
+        last_maintenance_date: formData.last_maintenance_date || null,
+        next_maintenance_date: formData.next_maintenance_date || null,
+        maintenance_notes: formData.maintenance_notes || null,
         last_location: null,
         last_location_time: null,
       };
@@ -110,6 +123,12 @@ export default function Vehicles() {
       imei: vehicle.imei || '',
       status: vehicle.status,
       driver_id: vehicle.driver_id || '',
+      vin: vehicle.vin || '',
+      year: vehicle.year?.toString() || '',
+      insurance_expiry: vehicle.insurance_expiry || '',
+      last_maintenance_date: vehicle.last_maintenance_date || '',
+      next_maintenance_date: vehicle.next_maintenance_date || '',
+      maintenance_notes: vehicle.maintenance_notes || '',
     });
     setDialogOpen(true);
   };
@@ -136,6 +155,12 @@ export default function Vehicles() {
       imei: '',
       status: 'active',
       driver_id: '',
+      vin: '',
+      year: '',
+      insurance_expiry: '',
+      last_maintenance_date: '',
+      next_maintenance_date: '',
+      maintenance_notes: '',
     });
   };
 
@@ -183,7 +208,7 @@ export default function Vehicles() {
               Add Vehicle
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingVehicle ? 'Edit Vehicle' : 'Add New Vehicle'}</DialogTitle>
               <DialogDescription>
@@ -253,6 +278,64 @@ export default function Vehicles() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="vin">VIN (Vehicle Identification Number)</Label>
+                <Input
+                  id="vin"
+                  value={formData.vin}
+                  onChange={(e) => setFormData({ ...formData, vin: e.target.value })}
+                  placeholder="17-character VIN"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="year">Year</Label>
+                <Input
+                  id="year"
+                  type="number"
+                  value={formData.year}
+                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                  placeholder="e.g., 2023"
+                  min="1900"
+                  max="2100"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="insurance_expiry">Insurance Expiry Date</Label>
+                <Input
+                  id="insurance_expiry"
+                  type="date"
+                  value={formData.insurance_expiry}
+                  onChange={(e) => setFormData({ ...formData, insurance_expiry: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="last_maintenance_date">Last Maintenance Date</Label>
+                <Input
+                  id="last_maintenance_date"
+                  type="date"
+                  value={formData.last_maintenance_date}
+                  onChange={(e) => setFormData({ ...formData, last_maintenance_date: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="next_maintenance_date">Next Maintenance Date</Label>
+                <Input
+                  id="next_maintenance_date"
+                  type="date"
+                  value={formData.next_maintenance_date}
+                  onChange={(e) => setFormData({ ...formData, next_maintenance_date: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="maintenance_notes">Maintenance Notes</Label>
+                <Textarea
+                  id="maintenance_notes"
+                  value={formData.maintenance_notes}
+                  onChange={(e) => setFormData({ ...formData, maintenance_notes: e.target.value })}
+                  placeholder="General maintenance notes and history"
+                  rows={3}
+                />
               </div>
               <div className="flex gap-2 justify-end">
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>

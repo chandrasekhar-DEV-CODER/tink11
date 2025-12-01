@@ -11,8 +11,10 @@ import type {
   TripEvent,
   Notification,
   VehicleWithDriver,
+  VehicleMaintenanceRecord,
   TripWithDetails,
   StudentWithDetails,
+  RouteWithStops,
   DashboardStats,
 } from '@/types/types';
 
@@ -154,11 +156,86 @@ export const vehiclesApi = {
   },
 };
 
+export const maintenanceApi = {
+  async getByVehicle(vehicleId: string) {
+    const { data, error } = await supabase
+      .from('vehicle_maintenance_records')
+      .select('*')
+      .eq('vehicle_id', vehicleId)
+      .order('performed_at', { ascending: false });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getAll() {
+    const { data, error } = await supabase
+      .from('vehicle_maintenance_records')
+      .select('*')
+      .order('performed_at', { ascending: false });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string) {
+    const { data, error} = await supabase
+      .from('vehicle_maintenance_records')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async create(record: Omit<VehicleMaintenanceRecord, 'id' | 'created_at' | 'updated_at'>) {
+    const { data, error } = await supabase
+      .from('vehicle_maintenance_records')
+      .insert(record)
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<VehicleMaintenanceRecord>) {
+    const { data, error } = await supabase
+      .from('vehicle_maintenance_records')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase
+      .from('vehicle_maintenance_records')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
 export const routesApi = {
   async getAll() {
     const { data, error } = await supabase
       .from('routes')
-      .select('*')
+      .select(`
+        *,
+        stops(*)
+      `)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getAllWithDetails() {
+    const { data, error } = await supabase
+      .from('routes')
+      .select(`
+        *,
+        stops(*)
+      `)
       .order('created_at', { ascending: false });
     if (error) throw error;
     return Array.isArray(data) ? data : [];
@@ -177,7 +254,10 @@ export const routesApi = {
   async getById(id: string) {
     const { data, error } = await supabase
       .from('routes')
-      .select('*')
+      .select(`
+        *,
+        stops(*)
+      `)
       .eq('id', id)
       .maybeSingle();
     if (error) throw error;

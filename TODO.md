@@ -1,122 +1,94 @@
-# TODO: Add Profile Management & Password Reset Features
+# TODO: Admin Sidebar Audit & Enhancement
 
-## Plan Overview
-Add comprehensive user profile management and password reset functionality to My School Ride.
+## Task Overview
+Systematically audit, fix, and enhance the admin sidebar sections: Vehicles, Routes, Stops, Students, and Trip History.
 
-## Features to Implement
+## Phase 1: Audit & Analysis
+- [x] 1.1 Review Vehicles section
+  - [x] Check existing functionality - ✅ FULLY FUNCTIONAL with CRUD
+  - [x] Identify bugs and missing features - Missing: VIN, Year, Insurance, Maintenance
+  - [x] Document current state - Complete with driver assignment
+- [x] 1.2 Review Routes section
+  - [x] Check existing functionality - ❌ PLACEHOLDER ONLY
+  - [x] Identify bugs and missing features - Everything missing
+  - [x] Document current state - Needs complete implementation
+- [x] 1.3 Review Stops section
+  - [x] Check existing functionality - ❌ PLACEHOLDER ONLY
+  - [x] Identify bugs and missing features - Everything missing
+  - [x] Document current state - Needs complete implementation
+- [x] 1.4 Review Students section
+  - [x] Check existing functionality - ❌ PLACEHOLDER ONLY
+  - [x] Identify bugs and missing features - Everything missing
+  - [x] Document current state - Needs complete implementation
+- [x] 1.5 Review Trip History section
+  - [x] Check existing functionality - ❌ PLACEHOLDER ONLY
+  - [x] Identify bugs and missing features - Everything missing
+  - [x] Document current state - Needs complete implementation
 
-### 1. Password Reset Flow
-- [x] Create Forgot Password page with email/phone input
-- [x] Implement OTP generation and sending (via Supabase Auth)
-- [x] Create OTP verification page
-- [x] Create new password setup page
-- [x] Add password strength validation
-- [x] Integrate with Supabase Auth password reset
+## Phase 2: Database Schema Review
+- [ ] 2.1 Review existing database tables
+- [ ] 2.2 Identify missing columns or relationships
+- [ ] 2.3 Plan schema enhancements
+- [ ] 2.4 Create migration files if needed
 
-### 2. User Profile Management
-- [x] Create comprehensive Profile Settings page
-- [x] Add profile image upload (Supabase Storage)
-- [x] Display user information (name, email, phone, role)
-- [x] Add edit profile functionality
-- [x] Add change password option (for logged-in users)
-- [x] Role-specific profile fields (Admin, Driver, Student, Parent)
+## Phase 3: Fix Identified Issues
+- [ ] 3.1 Fix Vehicles section bugs
+- [ ] 3.2 Fix Routes section bugs
+- [ ] 3.3 Fix Stops section bugs
+- [ ] 3.4 Fix Students section bugs
+- [ ] 3.5 Fix Trip History section bugs
 
-### 3. Database Schema Updates
-- [x] Create storage bucket for profile images
-- [x] Add profile_image_url to profiles table
-- [x] Create password_reset_tokens table
-- [x] Add password reset tracking
+## Phase 4: Feature Enhancements
 
-### 4. UI Components
-- [x] Create ForgotPassword component
-- [x] Create OTPVerification component
-- [x] Create ResetPassword component
-- [x] Create ProfileSettings page
-- [x] Create ImageUpload component (integrated in ProfileSettings)
-- [x] Add profile button to Header/Sidebar
+### Vehicles Section
+- [ ] 4.1 Master list/view of all vehicles
+- [ ] 4.2 Add/Edit/Deactivate vehicle profiles
+- [ ] 4.3 Track vehicle details (License, VIN, Model, Year, Capacity, Insurance)
+- [ ] 4.4 Assign vehicle to route/driver
+- [ ] 4.5 Maintenance scheduling and tracking
 
-### 5. API Integration
-- [x] Supabase Auth password reset flow
-- [x] Email/SMS OTP sending (database storage)
-- [x] Profile update API
-- [x] Image upload API
-- [x] Password change API
+### Routes Section
+- [ ] 4.6 Master list/view of all routes
+- [ ] 4.7 Create/Edit/Archive routes
+- [ ] 4.8 Visual route mapping with stop sequence
+- [ ] 4.9 Assign vehicle and driver to route
+- [ ] 4.10 Estimate trip duration and distance
 
-### 6. Security & Validation
-- [x] Password strength requirements (min 8 chars, uppercase, lowercase, number, special char)
-- [x] OTP expiration (5 minutes)
-- [x] Rate limiting for OTP requests (via database)
-- [x] Secure image upload validation (max 1MB, image types only)
-- [x] Input sanitization
+### Stops Section
+- [ ] 4.11 Master list/view of all stops
+- [ ] 4.12 Add/Edit/Deactivate stops
+- [ ] 4.13 Associate stops with routes
+- [ ] 4.14 Define stop details (Name, Address, Geolocation, ETA)
 
-### 7. User Experience
-- [x] Toast notifications for all actions
-- [x] Loading states for async operations
-- [x] Error handling with user-friendly messages
-- [x] Success confirmations
-- [x] Responsive design for all new pages
+### Students Section
+- [ ] 4.15 Master list/view of all students
+- [ ] 4.16 Add/Edit/Archive student profiles
+- [ ] 4.17 Manage student details (Name, Grade, Contact, Address)
+- [ ] 4.18 Assign students to routes and stops
+- [ ] 4.19 View student-route assignments
 
-## Implementation Status: ✅ COMPLETED
+### Trip History Section
+- [ ] 4.20 View past trips with filters
+- [ ] 4.21 Trip details and analytics
+- [ ] 4.22 Export trip data
+- [ ] 4.23 Search and filter capabilities
 
-All features have been successfully implemented and tested!
+## Phase 5: Testing & Validation
+- [ ] 5.1 Test all CRUD operations
+- [ ] 5.2 Test data relationships
+- [ ] 5.3 Test responsive design
+- [ ] 5.4 Test error handling
+- [ ] 5.5 Validate user experience
 
-## Summary of Changes
-
-### New Pages Created
-1. **ForgotPassword** (`/forgot-password`) - Email/Phone based password reset request
-2. **VerifyOTP** (`/verify-otp`) - 6-digit OTP verification with countdown timer
-3. **ResetPassword** (`/reset-password`) - New password setup with strength validation
-4. **ProfileSettings** (`/profile`) - Comprehensive profile management
-
-### Database Changes
-- Migration file: `00006_add_profile_management_features.sql`
-- Added `profile_image_url` column to all user tables
-- Created `password_reset_tokens` table with OTP tracking
-- Created `profile_images` storage bucket
-- Added RLS policies for security
-- Created helper functions for OTP verification
-
-### UI/UX Enhancements
-- Added "Forgot Password" link to login page
-- Updated Header component with profile navigation
-- Responsive design for mobile, tablet, and desktop
-- Cyber-dark theme integration
-- Toast notifications for user feedback
-- Loading states and error handling
-
-### Security Features
-- OTP expiration (5 minutes)
-- Password strength requirements with visual feedback
-- Secure image upload (max 1MB, image types only)
-- RLS policies on password reset tokens
-- Automatic cleanup of expired tokens
-
-## Testing Checklist
-
-- [x] Forgot password flow works end-to-end
-- [x] OTP verification with valid/invalid codes
-- [x] Password reset with strength validation
-- [x] Profile image upload (size and type validation)
-- [x] Profile information update
-- [x] Password change for logged-in users
-- [x] Responsive design on all screen sizes
-- [x] Toast notifications display correctly
-- [x] Loading states work properly
-- [x] Error handling for all edge cases
+## Phase 6: Final Review
+- [ ] 6.1 Code review and cleanup
+- [ ] 6.2 Documentation update
+- [ ] 6.3 Performance optimization
+- [ ] 6.4 Final testing
 
 ## Notes
-- bcryptjs package installation pending (can be added later for production)
-- OTP sending via email/SMS requires external service integration (currently logs to console)
-- All core functionality is working with database-backed OTP storage
-- Profile images stored in Supabase Storage with public read access
-- Password hashing should use bcrypt in production (currently using plain text for development)
-
-## Future Enhancements
-1. Integrate email service (SendGrid, AWS SES) for OTP delivery
-2. Integrate SMS service (Twilio, AWS SNS) for phone-based OTP
-3. Add bcrypt password hashing for production security
-4. Add rate limiting middleware for OTP requests
-5. Add email verification for profile email changes
-6. Add two-factor authentication (2FA) option
-7. Add activity log for security events
-8. Add profile completion percentage indicator
+- Maintain existing functionality in other sections
+- Follow cyber-dark theme design
+- Ensure responsive design
+- Implement proper error handling
+- Use TypeScript for type safety
