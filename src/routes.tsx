@@ -1,7 +1,7 @@
 import Dashboard from './pages/Dashboard';
 import LiveTracking from './pages/LiveTracking';
 import Vehicles from './pages/Vehicles';
-import Routes from './pages/Routes';
+import RoutesPage from './pages/Routes';
 import Stops from './pages/Stops';
 import Students from './pages/Students';
 import Trips from './pages/Trips';
@@ -80,7 +80,7 @@ const routes: RouteConfig[] = [
   {
     name: 'Routes',
     path: '/routes',
-    element: <Routes />
+    element: <RoutesPage />
   },
   {
     name: 'Stops',
