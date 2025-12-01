@@ -17,6 +17,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import VerifyOTP from './pages/auth/VerifyOTP';
 import ResetPassword from './pages/auth/ResetPassword';
 import ProfileSettings from './pages/ProfileSettings';
+import StudentPortal from './pages/student/StudentPortal';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -31,6 +32,11 @@ const routes: RouteConfig[] = [
     name: 'Dashboard',
     path: '/',
     element: <Dashboard />
+  },
+  {
+    name: 'Student Portal',
+    path: '/student',
+    element: <StudentPortal />
   },
   {
     name: 'Admin Dashboard',

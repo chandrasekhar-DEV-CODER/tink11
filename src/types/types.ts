@@ -47,6 +47,48 @@ export interface VehicleMaintenanceRecord {
   updated_at: string;
 }
 
+export interface VehicleLocationHistory {
+  id: string;
+  vehicle_id: string;
+  trip_id: string | null;
+  latitude: number;
+  longitude: number;
+  speed: number | null;
+  heading: number | null;
+  accuracy: number | null;
+  recorded_at: string;
+  created_at: string;
+}
+
+export interface HourlyVehicleActivity {
+  id: string;
+  hour_timestamp: string;
+  active_vehicle_count: number;
+  total_trips: number;
+  created_at: string;
+}
+
+export interface VehicleOnRoute {
+  vehicle_id: string;
+  plate_number: string;
+  model: string | null;
+  latest_latitude: number;
+  latest_longitude: number;
+  latest_speed: number | null;
+  latest_heading: number | null;
+  last_update: string;
+  trip_id: string;
+  trip_status: TripStatus;
+}
+
+export interface LatestVehicleLocation {
+  latitude: number;
+  longitude: number;
+  speed: number | null;
+  heading: number | null;
+  recorded_at: string;
+}
+
 export interface Route {
   id: string;
   name: string;

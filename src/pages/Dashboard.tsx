@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bus, Activity, AlertTriangle, Wrench, Users, Route as RouteIcon } from 'lucide-react';
-import { dashboardApi, tripsApi } from '@/db/api';
-import type { DashboardStats, TripWithDetails } from '@/types/types';
+import { dashboardApi, tripsApi, hourlyActivityApi } from '@/db/api';
+import type { DashboardStats, TripWithDetails, HourlyVehicleActivity } from '@/types/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -10,41 +10,50 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [activeTrips, setActiveTrips] = useState<TripWithDetails[]>([]);
+  const [hourlyData, setHourlyData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadDashboardData();
+    
+    // Refresh data every 30 seconds
+    const interval = setInterval(() => {
+      loadDashboardData();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const [statsData, tripsData] = await Promise.all([
+      const [statsData, tripsData, hourlyActivityData] = await Promise.all([
         dashboardApi.getStats(),
         tripsApi.getActive(),
+        hourlyActivityApi.getHourlyData(24),
       ]);
+      
       setStats(statsData);
       setActiveTrips(tripsData);
+      
+      // Format hourly data for the chart
+      const formattedHourlyData = hourlyActivityData.map((item: HourlyVehicleActivity) => ({
+        hour: new Date(item.hour_timestamp).toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }),
+        vehicles: item.active_vehicle_count,
+        trips: item.total_trips,
+      }));
+      
+      setHourlyData(formattedHourlyData);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
     }
   };
-
-  const hourlyData = [
-    { hour: '00:00', vehicles: 0 },
-    { hour: '06:00', vehicles: 2 },
-    { hour: '07:00', vehicles: 8 },
-    { hour: '08:00', vehicles: 12 },
-    { hour: '09:00', vehicles: 5 },
-    { hour: '12:00', vehicles: 3 },
-    { hour: '14:00', vehicles: 6 },
-    { hour: '15:00', vehicles: 10 },
-    { hour: '16:00', vehicles: 8 },
-    { hour: '18:00', vehicles: 2 },
-    { hour: '20:00', vehicles: 0 },
-  ];
 
   const StatCard = ({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) => (
     <Card className="card-elegant hover:scale-105 transition-smooth">
@@ -128,37 +137,46 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Card className="card-elegant">
           <CardHeader>
-            <CardTitle>Hourly Active Vehicles</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              Hourly Active Vehicles (Real-time - Last 24h)
+              <Badge variant="default" className="text-xs">Live</Badge>
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={hourlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="hour" 
-                  stroke="hsl(var(--muted-foreground))"
-                  style={{ fontSize: '12px' }}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  style={{ fontSize: '12px' }}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                  }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="vehicles" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--primary))', r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {hourlyData.length === 0 ? (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                No activity data available yet
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={hourlyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis 
+                    dataKey="hour" 
+                    stroke="hsl(var(--muted-foreground))"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="vehicles" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={2}
+                    dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 

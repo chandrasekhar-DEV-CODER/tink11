@@ -718,3 +718,182 @@ export const dashboardApi = {
     };
   },
 };
+
+// Vehicle Location Tracking API
+export const locationTrackingApi = {
+  async recordLocation(data: {
+    vehicle_id: string;
+    trip_id?: string | null;
+    latitude: number;
+    longitude: number;
+    speed?: number;
+    heading?: number;
+    accuracy?: number;
+  }) {
+    const { data: result, error } = await supabase
+      .from('vehicle_location_history')
+      .insert({
+        vehicle_id: data.vehicle_id,
+        trip_id: data.trip_id || null,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        speed: data.speed || 0,
+        heading: data.heading || null,
+        accuracy: data.accuracy || null,
+        recorded_at: new Date().toISOString(),
+      })
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    return result;
+  },
+
+  async getLatestLocation(vehicleId: string) {
+    const { data, error } = await supabase
+      .rpc('get_latest_vehicle_location', { p_vehicle_id: vehicleId });
+    if (error) throw error;
+    return data && data.length > 0 ? data[0] : null;
+  },
+
+  async getVehicleHistory(vehicleId: string, hours: number = 24) {
+    const { data, error } = await supabase
+      .from('vehicle_location_history')
+      .select('*')
+      .eq('vehicle_id', vehicleId)
+      .gte('recorded_at', new Date(Date.now() - hours * 60 * 60 * 1000).toISOString())
+      .order('recorded_at', { ascending: false });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getVehiclesOnRoute(routeId: string) {
+    const { data, error } = await supabase
+      .rpc('get_vehicles_on_route', { p_route_id: routeId });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getAllActiveVehicleLocations() {
+    const { data, error } = await supabase
+      .from('vehicle_location_history')
+      .select(`
+        *,
+        vehicle:vehicles(*)
+      `)
+      .gte('recorded_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
+      .order('recorded_at', { ascending: false });
+    if (error) throw error;
+    
+    // Get unique vehicles (latest location only)
+    const uniqueVehicles = new Map();
+    (data || []).forEach((loc: any) => {
+      if (!uniqueVehicles.has(loc.vehicle_id)) {
+        uniqueVehicles.set(loc.vehicle_id, loc);
+      }
+    });
+    
+    return Array.from(uniqueVehicles.values());
+  },
+};
+
+// Hourly Activity API
+export const hourlyActivityApi = {
+  async getHourlyData(hours: number = 24) {
+    const { data, error } = await supabase
+      .from('hourly_vehicle_activity')
+      .select('*')
+      .gte('hour_timestamp', new Date(Date.now() - hours * 60 * 60 * 1000).toISOString())
+      .order('hour_timestamp', { ascending: true });
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async aggregateCurrentHour() {
+    const { data, error } = await supabase
+      .rpc('aggregate_hourly_vehicle_activity');
+    if (error) throw error;
+    return data;
+  },
+
+  async cleanupOldData() {
+    const { data, error } = await supabase
+      .rpc('cleanup_old_location_data');
+    if (error) throw error;
+    return data;
+  },
+};
+
+// Student Portal API
+export const studentPortalApi = {
+  async getStudentByNumber(studentNumber: string) {
+    const { data, error } = await supabase
+      .from('students')
+      .select(`
+        *,
+        pickup_stop:stops!students_pickup_stop_id_fkey(*),
+        dropoff_stop:stops!students_dropoff_stop_id_fkey(*)
+      `)
+      .eq('student_number', studentNumber)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getStudentBusInfo(studentId: string) {
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .select(`
+        *,
+        pickup_stop:stops!students_pickup_stop_id_fkey(
+          *,
+          route:routes(*)
+        )
+      `)
+      .eq('id', studentId)
+      .maybeSingle();
+    
+    if (studentError) throw studentError;
+    if (!student || !student.pickup_stop?.route) return null;
+
+    // Get vehicles on the student's route
+    const vehicles = await locationTrackingApi.getVehiclesOnRoute(student.pickup_stop.route.id);
+    
+    return {
+      student,
+      route: student.pickup_stop.route,
+      pickup_stop: student.pickup_stop,
+      vehicles_on_route: vehicles,
+    };
+  },
+
+  async calculateETA(
+    vehicleLat: number,
+    vehicleLng: number,
+    stopLat: number,
+    stopLng: number,
+    currentSpeed: number
+  ) {
+    // Haversine formula to calculate distance
+    const R = 6371; // Earth's radius in km
+    const dLat = (stopLat - vehicleLat) * Math.PI / 180;
+    const dLon = (stopLng - vehicleLng) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(vehicleLat * Math.PI / 180) * Math.cos(stopLat * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+
+    // Calculate ETA (assuming average speed if current speed is 0)
+    const speed = currentSpeed > 0 ? currentSpeed : 30; // Default 30 km/h
+    const timeInHours = distance / speed;
+    const timeInMinutes = Math.round(timeInHours * 60);
+
+    return {
+      distance_km: Math.round(distance * 10) / 10,
+      eta_minutes: timeInMinutes,
+      is_approaching: distance < 1, // Within 1km
+    };
+  },
+};
